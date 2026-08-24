@@ -38,14 +38,23 @@ The plugin connects to `https://mcp.meetstream.ai/mcp` and exposes 19 tools:
 
 ## Skills
 
-Four skills teach the agent how to use those tools well:
+Eleven skills teach the agent how to use MeetStream well - they load automatically when the conversation matches:
 
 | Skill | Triggers on |
 |---|---|
 | **join-meeting** | "join this meeting", "send a bot to...", "record this call", "make the bot leave" |
 | **meeting-brief** | "summarize that meeting", "action items", "what did we decide", "who talked the most" |
-| **build-notetaker** | "build a notetaker", "integrate MeetStream into my app", "set up webhooks", "auto-join my calendar" |
+| **mia-voice-agents** | "voice agent", "AI agent in the meeting", "talking bot", "wake word", "MIA" |
+| **webhooks** | "webhook", "callback_url", "bot events", "my webhook isn't firing" |
+| **realtime-streaming** | "live transcription", "real-time captions", "stream the audio", "websocket" |
+| **recordings-and-media** | "download the recording", "per-participant audio", "pause recording", "retention", "own S3 bucket" |
+| **calendar-automation** | "auto-join my meetings", "connect my calendar", "recurring meetings" |
+| **platform-setup** | "can't join Zoom", "waiting room", "recording permission", "signed-in bots", "Teams lobby" |
+| **troubleshooting** | "401", "403", "stuck on 202", "507", "transcript never arrives", "duplicate bots" |
+| **build-notetaker** | "build a notetaker", "integrate MeetStream into my app", "set up webhooks" |
 | **migrate-from-recall** | "migrate from Recall", "move off recall.ai", "Recall alternative" |
+
+Some MeetStream capabilities (MIA agent configs, calendar connection, signed-in bots, storage config) are REST-only and not MCP tools. The skills know the difference and route correctly.
 
 ## Your API key
 
