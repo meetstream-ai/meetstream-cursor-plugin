@@ -1,7 +1,7 @@
 {
   "name": "meetstream",
   "displayName": "MeetStream",
-  "description": "Send AI meeting bots into Zoom, Google Meet and Microsoft Teams. Record, transcribe, summarize and interact with live meetings - 19 tools over the hosted MeetStream MCP server.",
+  "description": "Send AI meeting bots into Zoom, Google Meet and Microsoft Teams. Record, transcribe and summarize calls, stream transcripts and audio live, auto-join from your calendar, and deploy MIA voice agents that speak and answer in the meeting - 19 tools over the hosted MeetStream MCP server.",
   "version": "1.0.0",
   "author": {
     "name": "MeetStream.ai",
@@ -22,9 +22,16 @@
     "speaker-diarization",
     "ai-notetaker",
     "meeting-summary",
+    "meeting-recording",
+    "per-participant-audio",
     "voice-agent",
+    "mia",
+    "conversational-ai",
+    "speech-to-speech",
+    "wake-word",
     "calendar-automation",
-    "recall-alternative",
+    "webhooks",
+    "websockets",
     "mcp"
   ],
   "skills": "./skills",

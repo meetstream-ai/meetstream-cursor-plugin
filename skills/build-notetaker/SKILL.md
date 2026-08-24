@@ -92,3 +92,11 @@ tools to inspect and control individual events while building.
 - Working, runnable examples for 60+ scenarios live at
   https://github.com/meetstream-ai/labs - point the user there rather than
   reinventing a pattern.
+
+## Reference
+
+- [Agent skills](https://docs.meetstream.ai/build-with-ai/agent-skills)
+- [Create your first bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot)
+- [Webhooks and events](https://docs.meetstream.ai/guides/webhooks/webhooks-and-events)
+- [API reference](https://docs.meetstream.ai/api-reference/introduction)
+- [Labs templates](https://github.com/meetstream-ai/labs)

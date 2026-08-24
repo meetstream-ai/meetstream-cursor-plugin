@@ -104,3 +104,11 @@ If the agent joins but never speaks, check in this order: is `agent_config_id` a
 set on the bot; did you wrongly also pass `socket_connection_url` / `live_audio_required`;
 is a wake word enabled that you are not saying; is the model provider key configured on
 your MeetStream account.
+
+## Reference
+
+- [Create MIA](https://docs.meetstream.ai/guides/mia/create-mia)
+- [MIA configurations](https://docs.meetstream.ai/guides/mia/mia-configurations)
+- [Create agent config API](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config)
+- [Update](https://docs.meetstream.ai/api-reference/api-endpoints/mia/update-agent-config) · [List](https://docs.meetstream.ai/api-reference/api-endpoints/mia/get-agent-configs) · [Delete](https://docs.meetstream.ai/api-reference/api-endpoints/mia/delete-agent-config)
+- [Bridge server architecture](https://docs.meetstream.ai/guides/websockets/bridge-server-architecture) (bring-your-own-bridge, not needed for MIA)

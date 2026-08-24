@@ -87,3 +87,12 @@ never help - the transcript was delivered live during the meeting.
 - Do not call `delete_bot_data` without explicit confirmation.
 - Do not create a second bot for the same meeting because the first is slow to join;
   check its status first.
+
+## Reference
+
+- [Create your first bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot)
+- [How bots work](https://docs.meetstream.ai/guides/introduction/how-bots-work)
+- [create_bot API](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/create-bot)
+- [Automatic leave configuration](https://docs.meetstream.ai/guides/features/automatic-leave-configuration)
+- [Deduplication and idempotency keys](https://docs.meetstream.ai/guides/features/deduplication-idempotency-keys)
+- [Custom attributes](https://docs.meetstream.ai/guides/features/custom-attributes)

@@ -80,3 +80,12 @@ Before building a WebSocket server, check whether the REST path is enough:
 
 Reach for WebSockets when you need raw media or custom real-time logic, not for
 one-off actions.
+
+## Reference
+
+- [Live transcription](https://docs.meetstream.ai/guides/transcription-recordings/live-transcription)
+- [Real-time audio streaming](https://docs.meetstream.ai/guides/websockets/real-time-audio-streaming)
+- [Meeting control patterns](https://docs.meetstream.ai/guides/websockets/meeting-control-patterns)
+- [Bridge server architecture](https://docs.meetstream.ai/guides/websockets/bridge-server-architecture)
+- [Streaming providers](https://docs.meetstream.ai/guides/transcription-recordings/providers/transcription-providers)
+- [Chat and visuals](https://docs.meetstream.ai/guides/features/chat-and-visuals)

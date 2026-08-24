@@ -92,3 +92,10 @@ Check these first - they look like platform problems and are not:
   was ever created.
 - The bot did join, but a streaming-only provider means there is no post-call
   transcript to find.
+
+## Reference
+
+- Platform guides: [Zoom](https://docs.meetstream.ai/guides/platforms/zoom) · [Google Meet](https://docs.meetstream.ai/guides/platforms/google-meet) · [Microsoft Teams](https://docs.meetstream.ai/guides/platforms/microsoft-teams)
+- [Google Meet lobby admission](https://docs.meetstream.ai/guides/app-integrations/gmeet-lobby-admission)
+- [Zoom OBF implementation](https://docs.meetstream.ai/guides/app-integrations/zoom-obf-implementation) · [Zoom app production submission](https://docs.meetstream.ai/guides/app-integrations/zoom-app-production-submission)
+- [Automatic leave configuration](https://docs.meetstream.ai/guides/features/automatic-leave-configuration)

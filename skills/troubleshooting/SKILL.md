@@ -45,7 +45,7 @@ original bot back. No duplicate, no double charge. Accept `201` and `507` as suc
 
 | `message` | Cause |
 |---|---|
-| `meeting_link is required.` | Sent `meeting_url` (the Recall field name) instead of `meeting_link` |
+| `meeting_link is required.` | Sent `meeting_url` instead of `meeting_link` |
 | `in_call_recording_timeout must be at least 600 seconds` | Below the 600s floor |
 | `recording_permission_denied_timeout must not exceed 300 seconds` | Outside the 60-300 range |
 | streaming provider required | Set `live_transcription_required.webhook_url` without a `*_streaming` provider |
@@ -92,3 +92,10 @@ Auth differs by surface, which trips people up:
 - **MCP server** (`mcp.meetstream.ai`): `Authorization: Bearer <key>`
 
 Keys come from https://app.meetstream.ai/api-key.
+
+## Reference
+
+- [Errors](https://docs.meetstream.ai/errors)
+- [Debugging bots](https://docs.meetstream.ai/guides/help/debugging-bots)
+- [FAQ](https://docs.meetstream.ai/guides/help/faq) · [Support](https://docs.meetstream.ai/guides/help/support)
+- [Authentication](https://docs.meetstream.ai/api-reference/authentication)

@@ -94,3 +94,11 @@ Two failure modes to check before debugging your code:
 | Handler never runs but delivery succeeds | Branching on `bot_event` instead of `event` |
 | Everything looks successful but no recording | `bot.stopped` with `bot_status` `NotAllowed` or `Denied` |
 | Duplicate processing | No dedupe on `bot_id` + `event`, or handler too slow |
+
+## Reference
+
+- [Webhooks and events](https://docs.meetstream.ai/guides/webhooks/webhooks-and-events)
+- [Webhook signature verification](https://docs.meetstream.ai/guides/webhooks/webhook-signature-verification)
+- [Local webhook server](https://docs.meetstream.ai/guides/webhooks/local-webhook-server)
+- [Workspace webhooks](https://docs.meetstream.ai/guides/webhooks/workspace-webhooks)
+- [Errors](https://docs.meetstream.ai/errors)

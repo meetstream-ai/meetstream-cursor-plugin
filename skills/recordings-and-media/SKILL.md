@@ -91,3 +91,11 @@ Two things to tell the user before they run it:
   endpoints return 403 for that media - you read it from your bucket, not from the API.
 
 Objects land under `{prefix}/{bot_id}_<file>`.
+
+## Reference
+
+- [Retrieve recordings](https://docs.meetstream.ai/guides/transcription-recordings/retrieve-recordings)
+- [Per-participant audio](https://docs.meetstream.ai/guides/transcription-recordings/per-participant-audio) · [Per-participant video](https://docs.meetstream.ai/guides/transcription-recordings/per-participant-video)
+- [Pause and resume recording](https://docs.meetstream.ai/guides/features/pause-resume-recording)
+- [Usage and retention](https://docs.meetstream.ai/guides/features/usage-and-retention)
+- [Custom storage configurations](https://docs.meetstream.ai/guides/features/custom-storage-configurations)

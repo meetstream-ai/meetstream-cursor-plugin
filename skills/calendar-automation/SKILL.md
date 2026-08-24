@@ -90,3 +90,10 @@ series or one occurrence - getting this wrong either spams every standup or miss
 schedules, and removes stored credentials. Show the user what will be lost and confirm
 before calling it. There is no per-account `/calendar/connections/...` path; scope the
 disconnect via the request body.
+
+## Reference
+
+- [Google Calendar OAuth setup](https://docs.meetstream.ai/guides/calendar-integrations/google-calendar-oauth-setup)
+- [Outlook Calendar setup](https://docs.meetstream.ai/guides/calendar-integrations/outlook-calendar-setup)
+- [Scheduling bots](https://docs.meetstream.ai/guides/features/scheduling-bots)
+- [Create calendar API](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar) · [Schedule event](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/schedule-event) · [List scheduled bots](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/list-scheduled-bots)

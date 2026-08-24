@@ -82,3 +82,11 @@ If a transcription failed, was in the wrong language, or you want a second opini
 from another engine, use **`transcribe_audio`** on the existing bot. This works even
 for bots that originally used a streaming-only provider, and is the only way to get a
 post-call transcript for those.
+
+## Reference
+
+- [Bot summary API](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/get-bot-summary)
+- [Participants and speaker timeline](https://docs.meetstream.ai/guides/features/participants-and-speaker-timeline)
+- [Post-call transcription](https://docs.meetstream.ai/guides/transcription-recordings/post-call-transcription)
+- [Diarization](https://docs.meetstream.ai/guides/transcription-recordings/diarization)
+- [Languages and translation](https://docs.meetstream.ai/guides/transcription-recordings/languages-and-translation)
