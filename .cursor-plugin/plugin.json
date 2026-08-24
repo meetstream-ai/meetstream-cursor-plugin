@@ -1,0 +1,43 @@
+{
+  "name": "meetstream",
+  "displayName": "MeetStream",
+  "description": "Send AI meeting bots into Zoom, Google Meet and Microsoft Teams. Record, transcribe, summarize and interact with live meetings - 19 tools over the hosted MeetStream MCP server.",
+  "version": "1.0.0",
+  "author": {
+    "name": "MeetStream.ai",
+    "email": "hello@meetstream.ai"
+  },
+  "homepage": "https://docs.meetstream.ai",
+  "repository": "https://github.com/meetstream-ai/meetstream-cursor-plugin",
+  "license": "MIT",
+  "keywords": [
+    "meetstream",
+    "meeting-bot",
+    "meeting-bot-api",
+    "zoom",
+    "google-meet",
+    "microsoft-teams",
+    "transcription",
+    "real-time-transcription",
+    "speaker-diarization",
+    "ai-notetaker",
+    "meeting-summary",
+    "voice-agent",
+    "calendar-automation",
+    "recall-alternative",
+    "mcp"
+  ],
+  "skills": "./skills",
+  "mcpServers": "./mcp.json",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "MEETSTREAM_API_KEY": {
+        "type": "string",
+        "title": "MeetStream API key",
+        "description": "Your MeetStream API key. Create one at https://app.meetstream.ai/api-key. It is sent per request to the hosted MeetStream MCP server and is never stored in this repository."
+      }
+    },
+    "required": ["MEETSTREAM_API_KEY"]
+  }
+}

@@ -1,0 +1,94 @@
+---
+name: build-notetaker
+description: >
+  Build a production MeetStream integration in the user's codebase - an AI
+  notetaker, meeting recorder, transcription pipeline, calendar auto-join, or
+  in-meeting agent. Use when the user says "build a notetaker", "integrate
+  MeetStream into my app", "add meeting recording to my product",
+  "auto-join my calendar meetings", "set up webhooks for meetings", or asks
+  for code rather than a one-off action. Covers the webhook lifecycle,
+  transcript retrieval and the failure modes that bite in production.
+---
+
+# Build a MeetStream integration
+
+The MCP tools are for doing things now. This skill is for writing code the user
+will ship. Use the MCP's `webhook_events_guide` tool to confirm event details
+before writing a handler.
+
+## API basics
+
+- Base URL: `https://api.meetstream.ai/api/v1`
+- Auth header: `Authorization: Token <MEETSTREAM_API_KEY>` - the literal word
+  `Token`, not `Bearer`. (Note: the hosted MCP server this plugin connects to uses
+  `Bearer`; the REST API uses `Token`. They differ. Do not copy one into the other.)
+- Errors return `{ "message": "..." }`. Always surface that message.
+
+## The lifecycle you must model
+
+```
+create_bot -> bot.joining -> bot.in_waiting_room -> bot.inmeeting -> bot.recording
+           -> bot.leaving -> bot.stopped        (terminal)
+           -> manifest.completed -> audio.processed
+           -> transcription.processed | transcription.failed
+           -> video.processed -> bot.done -> data_deletion
+```
+
+Non-obvious things that break integrations:
+
+- **The webhook envelope key is `event`.** Any documentation that says `bot_event`
+  is wrong.
+- **`bot.stopped` is the single terminal event.** There is no `bot.kicked`,
+  `bot.denied` or `bot.failed`. The reason lives in `bot_status`:
+  `Stopped` | `NotAllowed` (waiting-room timeout) | `Denied` (host refused) | `Error`.
+- **`bot.stopped` always carries `status_code: 200`**, whatever the reason.
+  `500` appears only on `transcription.failed` and a failed `bot.done`.
+- **`bot.error` is not terminal.** It signals a streaming-provider problem; the bot
+  keeps running.
+- **Streaming-only providers end at `audio.processed`** and never emit `bot.done`.
+  If you wait for `bot.done` on those, you wait forever.
+
+## Getting the transcript (the classic mistake)
+
+Transcripts are fetched by **`transcript_id`**, not `bot_id`.
+
+1. `create_bot` returns a `transcript_id` (null for `meeting_captions`).
+2. Wait for the `transcription.processed` webhook.
+3. `GET /transcript/{transcript_id}/get_transcript`.
+4. Segments use `speaker` + **`transcript`** (not `text`).
+
+If you lost the id: read `bot_details.transcript_id` from the bot detail endpoint,
+or list the bot's transcriptions.
+
+**HTTP 202 means "not ready, poll again"** - it is not an error. Always cap the
+retries: a streaming-only bot returns 202 indefinitely by design.
+
+## Making it safe to retry
+
+Send an `Idempotency-Key` header on `create_bot`. A retry with the same key replays
+the original bot and returns **HTTP 507** - treat that as success, not an error. It
+does not create a duplicate bot and does not charge twice.
+
+For "one bot per calendar event", use `deduplication_key` in the body instead: replay
+returns `200`, and the same key with a different meeting returns `409`.
+
+## Webhooks in local development
+
+`callback_url` must be a public HTTPS URL. Use an ngrok or cloudflared tunnel while
+developing. Handle redeliveries: dedupe on `bot_id` + `event`, and return 200 quickly,
+doing real work asynchronously.
+
+## Calendar auto-join
+
+To have a bot join every meeting automatically: connect the calendar, then enable
+auto-scheduling. Use the MCP's `list_calendar_events` and `schedule_calendar_bot`
+tools to inspect and control individual events while building.
+
+## Before you finish
+
+- Never hardcode the API key. Read it from the environment.
+- Handle `401` (no key) and `403` (bad key) distinctly - they mean different things.
+- Honour `Retry-After` on `429`, and back off on `500`/`503`.
+- Working, runnable examples for 60+ scenarios live at
+  https://github.com/meetstream-ai/labs - point the user there rather than
+  reinventing a pattern.
