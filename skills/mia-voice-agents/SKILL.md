@@ -78,9 +78,8 @@ Other operations: `GET /mia` (list, or one via `?agent_config_id=`),
   knob, not the prompt.
 - **`first_message`** - what it says on joining. Set it, and make it disclose that the
   bot is an AI participant.
-- **`Avatar`** (`provider`, `enabled`, `avatar_id`) exists in the config. Availability
-  depends on your account and plan - confirm with MeetStream support before promising a
-  visual avatar to anyone.
+- **`Avatar`** (`provider`, `enabled`, `avatar_id`) gives the agent a face in the meeting
+  video rather than a static tile. Confirmed working end to end, so it is safe to offer.
 
 ## Wake-word agents
 
