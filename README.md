@@ -4,7 +4,7 @@
 
 **Put an AI bot in your meetings from inside your editor.**
 
-Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **Microsoft Teams** — or deploy a [**MIA voice agent**](#-mia-voice-agents-that-actually-talk) that listens and *talks back* in the room. All through **19 tools** and **10 skills**, over the hosted [MeetStream](https://meetstream.ai) MCP server.
+Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **Microsoft Teams** - or deploy a [**MIA voice agent**](#-mia-voice-agents-that-actually-talk) that listens and *talks back* in the room. All through **19 tools** and **10 skills**, over the hosted [MeetStream](https://meetstream.ai) MCP server.
 
 [![Docs](https://img.shields.io/badge/docs-docs.meetstream.ai-fd6316?style=flat-square)](https://docs.meetstream.ai)
 [![MCP](https://img.shields.io/badge/MCP-19%20tools-6b4ea8?style=flat-square)](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server)
@@ -89,14 +89,14 @@ Most meeting bots sit silently and record. **MIA** joins as a real participant t
 | [`realtime`](https://docs.meetstream.ai/guides/mia/create-mia) | You want lowest latency with a single speech-to-speech model |
 
 > [!IMPORTANT]
-> Attaching an agent takes **only `agent_config_id`**. Passing `socket_connection_url` or `live_audio_required` alongside it is the single most common cause of a silent agent — those are for bring-your-own-bridge setups. The [`mia-voice-agents`](skills/mia-voice-agents/SKILL.md) skill enforces this.
+> Attaching an agent takes **only `agent_config_id`**. Passing `socket_connection_url` or `live_audio_required` alongside it is the single most common cause of a silent agent - those are for bring-your-own-bridge setups. The [`mia-voice-agents`](skills/mia-voice-agents/SKILL.md) skill enforces this.
 
 Two fields worth setting that most people miss: **`boostwords`** on the transcriber (fixes "it mishears our company name") and **`mcp_servers`** on the agent (turns a talking bot into one that does work). Full reference: [Create MIA](https://docs.meetstream.ai/guides/mia/create-mia) · [MIA configurations](https://docs.meetstream.ai/guides/mia/mia-configurations) · [API](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config).
 
 ## 🧰 The 19 tools
 
 <details open>
-<summary><b>Bot lifecycle</b> — 7 tools</summary>
+<summary><b>Bot lifecycle</b> - 7 tools</summary>
 
 | Tool | Does | API |
 |---|---|---|
@@ -111,7 +111,7 @@ Two fields worth setting that most people miss: **`boostwords`** on the transcri
 </details>
 
 <details open>
-<summary><b>Transcription</b> — 3 tools</summary>
+<summary><b>Transcription</b> - 3 tools</summary>
 
 | Tool | Does | API |
 |---|---|---|
@@ -124,7 +124,7 @@ Provider choice matters: [post-call](https://docs.meetstream.ai/guides/transcrip
 </details>
 
 <details open>
-<summary><b>Meeting data</b> — 4 tools</summary>
+<summary><b>Meeting data</b> - 4 tools</summary>
 
 | Tool | Does | API |
 |---|---|---|
@@ -136,7 +136,7 @@ Provider choice matters: [post-call](https://docs.meetstream.ai/guides/transcrip
 </details>
 
 <details open>
-<summary><b>Live interaction &amp; calendar</b> — 5 tools</summary>
+<summary><b>Live interaction &amp; calendar</b> - 5 tools</summary>
 
 | Tool | Does | API |
 |---|---|---|
@@ -150,7 +150,7 @@ Provider choice matters: [post-call](https://docs.meetstream.ai/guides/transcrip
 
 ## 📚 Skills
 
-Ten skills teach the agent how to use MeetStream *well*. They load automatically when the conversation matches — no command to remember.
+Ten skills teach the agent how to use MeetStream *well*. They load automatically when the conversation matches - no command to remember.
 
 | Skill | Loads when you say | Deep dive |
 |---|---|---|
@@ -170,12 +170,12 @@ Ten skills teach the agent how to use MeetStream *well*. They load automatically
 
 The tools are just an API surface. The skills carry the hard-won details that stop an agent guessing wrong:
 
-- **MIA takes only `agent_config_id`** — adding bridge URLs silences the agent
+- **MIA takes only `agent_config_id`** - adding bridge URLs silences the agent
 - The webhook envelope key is **`event`**, and **`bot.stopped`** is the single terminal event, always at `status_code: 200`
 - **Streaming-only providers never emit `bot.done`** and return `202` forever on a post-call transcript fetch
 - Transcripts are fetched by **`transcript_id`**, and segments use **`transcript`**, not `text`
-- **`202` and `507` are not errors** — 202 means poll again, 507 means your idempotent retry replayed
-- **REST uses `Authorization: Token`, the MCP server uses `Bearer`** — mixing them up returns 401
+- **`202` and `507` are not errors** - 202 means poll again, 507 means your idempotent retry replayed
+- **REST uses `Authorization: Token`, the MCP server uses `Bearer`** - mixing them up returns 401
 - `in_call_recording_timeout` has a hard **600 second floor**
 
 </details>
@@ -185,7 +185,7 @@ The tools are just an API surface. The skills carry the hard-won details that st
 
 ## 🔐 Your API key
 
-Declared as a **plugin variable** and set in the Cursor dashboard — never in this repo, never in a committed file. Cursor interpolates it into the `Authorization` header per request. The hosted server is multi-tenant and stores no key of its own.
+Declared as a **plugin variable** and set in the Cursor dashboard - never in this repo, never in a committed file. Cursor interpolates it into the `Authorization` header per request. The hosted server is multi-tenant and stores no key of its own.
 
 Prefer the key never leaving your machine? Run the server locally over stdio instead:
 
@@ -215,11 +215,11 @@ skills/*/SKILL.md            10 skills
 
 | | What | Where |
 |:--:|---|---|
-| 🔌 | **MCP server** — the same 19 tools for any MCP client | [`@meetstream/mcp`](https://www.npmjs.com/package/@meetstream/mcp) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server) |
-| ⌨️ | **CLI** — drive MeetStream from your terminal | [`@meetstream/cli`](https://www.npmjs.com/package/@meetstream/cli) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-cli) |
-| 🤖 | **Claude Code plugin** — `/plugin marketplace add meetstream-ai/claude-plugin` | [docs](https://docs.meetstream.ai/build-with-ai/claude-integration) |
-| 🧪 | **Labs** — runnable end-to-end templates | [github](https://github.com/meetstream-ai/labs) |
-| 📖 | **Docs for agents** — machine-readable docs for your own tooling | [docs](https://docs.meetstream.ai/build-with-ai/docs-for-agents) |
+| 🔌 | **MCP server** - the same 19 tools for any MCP client | [`@meetstream/mcp`](https://www.npmjs.com/package/@meetstream/mcp) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server) |
+| ⌨️ | **CLI** - drive MeetStream from your terminal | [`@meetstream/cli`](https://www.npmjs.com/package/@meetstream/cli) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-cli) |
+| 🤖 | **Claude Code plugin** - `/plugin marketplace add meetstream-ai/claude-plugin` | [docs](https://docs.meetstream.ai/build-with-ai/claude-integration) |
+| 🧪 | **Labs** - runnable end-to-end templates | [github](https://github.com/meetstream-ai/labs) |
+| 📖 | **Docs for agents** - machine-readable docs for your own tooling | [docs](https://docs.meetstream.ai/build-with-ai/docs-for-agents) |
 
 ## 🔗 Links
 
