@@ -218,7 +218,7 @@ skills/*/SKILL.md            10 skills
 | 🔌 | **MCP server** — the same 19 tools for any MCP client | [`@meetstream/mcp`](https://www.npmjs.com/package/@meetstream/mcp) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server) |
 | ⌨️ | **CLI** — drive MeetStream from your terminal | [`@meetstream/cli`](https://www.npmjs.com/package/@meetstream/cli) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-cli) |
 | 🤖 | **Claude Code plugin** — `/plugin marketplace add meetstream-ai/claude-plugin` | [docs](https://docs.meetstream.ai/build-with-ai/claude-integration) |
-| 🧪 | **Labs** — 60+ runnable templates covering every endpoint | [github](https://github.com/meetstream-ai/labs) |
+| 🧪 | **Labs** — runnable end-to-end templates | [github](https://github.com/meetstream-ai/labs) |
 | 📖 | **Docs for agents** — machine-readable docs for your own tooling | [docs](https://docs.meetstream.ai/build-with-ai/docs-for-agents) |
 
 ## 🔗 Links
