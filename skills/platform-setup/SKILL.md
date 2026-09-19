@@ -11,17 +11,22 @@ description: >
 # Platform setup and quirks
 
 Most "the bot didn't join" reports are platform behaviour, not API failures. Diagnose
-from the terminal `bot_status` first.
+from the terminal webhook first: every ending arrives with `event: "bot.stopped"`, and
+**`bot_event`** says why.
 
-| `bot_status` on `bot.stopped` | Meaning | Fix |
+| `bot_event` | Meaning | Fix |
 |---|---|---|
-| `NotAllowed` | Sat in the waiting room until timeout | Have someone admit it, raise `waiting_room_timeout`, or use a signed-in bot |
-| `Denied` | A host actively refused it | Human decision. Do not auto-retry |
-| `Error` | Session crashed | Create a fresh bot |
+| `bot.notallowed` | Sat in the waiting room until timeout | Have someone admit it, raise `waiting_room_timeout`, or use a signed-in bot |
+| `bot.denied` | A host actively refused it | Human decision. Do not auto-retry |
+| `bot.kicked` | A participant removed it | Human decision. Do not auto-retry |
+| `bot.failed` | Session crashed | Create a fresh bot |
+
+Without webhooks, `get_bot_status` shows the same outcome as `NotAllowed`, `Denied` or `Error`.
 
 ## Automatic leave timeouts
 
-Set on `create_bot` under `automatic_leave`:
+Set on the REST `create_bot` request under `automatic_leave`. The MCP `create_bot` tool
+does not expose these, so use the REST API when you need them:
 
 | Field | Notes |
 |---|---|
@@ -42,10 +47,14 @@ Zoom also needs app-level setup before bots can join meetings outside your own a
 - A Zoom Marketplace app, with credentials added on the MeetStream side.
 - Development mode restricts bots to meetings hosted by the app owner. Production use
   requires submitting the app for review.
-- **OBF** (Zoom's OAuth Bot Framework) is supported via `zoom.use_zoom_obf` on
-  `create_bot`.
-- **Zoom OAuth connections** let your end users connect their own Zoom account so bots
-  can join on their behalf (REST: `/zoom/oauth/authorize-url`, `/zoom/oauth/connections`).
+- **Authenticated joins** use the `zoom` object on the REST `create_bot` request, with
+  exactly one of `zak_url` (the bot joins signed in as a Zoom user) or `obf_url` (the bot
+  joins on behalf of a user who is already in the meeting). Each is an HTTPS URL on
+  **your** server that returns a fresh token when MeetStream calls it at join time.
+  You run the Zoom OAuth flow and keep the refresh tokens; MeetStream does not store them.
+- `use_zoom_obf` and `zoom_oauth_connection_user_id` are **rejected** by the API, and the
+  old `/zoom/oauth/*` connection endpoints are no longer documented. Do not use them.
+- Omit `zoom` (or send `{}`) for a guest join.
 
 Full walkthrough: https://docs.meetstream.ai/guides/app-integrations/zoom-marketplace-app-setup
 
@@ -55,7 +64,8 @@ The common complaint is the bot appearing as an unverified guest and getting stu
 the lobby. The fix is a **signed-in bot**: the bot authenticates as a real Google
 Workspace user before joining.
 
-Setup is a one-time Workspace configuration (REST, not MCP tools):
+Setup is a one-time Workspace configuration, and the `google_meet` fields below go on the
+REST `create_bot` request (the MCP tool does not expose them):
 
 1. Configure a SAML SSO profile in Google Workspace Admin.
 2. Generate a certificate pair:
@@ -97,5 +107,5 @@ Check these first - they look like platform problems and are not:
 
 - Platform guides: [Zoom](https://docs.meetstream.ai/guides/platforms/zoom) · [Google Meet](https://docs.meetstream.ai/guides/platforms/google-meet) · [Microsoft Teams](https://docs.meetstream.ai/guides/platforms/microsoft-teams)
 - [Google Meet lobby admission](https://docs.meetstream.ai/guides/app-integrations/gmeet-lobby-admission)
-- [Zoom OBF implementation](https://docs.meetstream.ai/guides/app-integrations/zoom-obf-implementation) · [Zoom app production submission](https://docs.meetstream.ai/guides/app-integrations/zoom-app-production-submission)
+- [Zoom authenticated bots (ZAK and OBF)](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots) · [Zoom app production submission](https://docs.meetstream.ai/guides/app-integrations/zoom-app-production-submission)
 - [Automatic leave configuration](https://docs.meetstream.ai/guides/features/automatic-leave-configuration)

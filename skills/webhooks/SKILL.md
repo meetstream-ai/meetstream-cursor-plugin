@@ -11,18 +11,20 @@ description: >
 
 # MeetStream webhooks
 
-Call the **`webhook_events_guide`** MCP tool for the live-verified event reference
-before writing a handler. This skill covers what that reference does not: the traps.
+Call the **`webhook_events_guide`** MCP tool for the full event reference before writing
+a handler. This skill covers the traps.
 
 ## The envelope
 
 ```json
-{ "event": "bot.inmeeting", "bot_id": "...", "bot_status": "InMeeting",
-  "message": "...", "status_code": 200, "custom_attributes": {} }
+{ "event": "bot.stopped", "bot_event": "bot.notallowed", "bot_id": "...",
+  "bot_status": "NotAllowed", "message": "Failed: Not admitted to meeting",
+  "status_code": 500, "timestamp": "...", "custom_attributes": {} }
 ```
 
-The key is **`event`**. Any documentation, blog post or older sample that says
-`bot_event` is wrong. If you branch on `bot_event` your handler silently does nothing.
+Every delivery carries the event name under **`event`**. Most also carry **`bot_event`**
+with the specific name. Route on `event`; read `bot_event` when you need the detail.
+Every event, lifecycle ones included, carries a `timestamp`.
 
 There is no global webhook endpoint. You set `callback_url` **per bot** on `create_bot`.
 
@@ -30,34 +32,43 @@ There is no global webhook endpoint. You set `callback_url` **per bot** on `crea
 
 ```
 bot.joining -> bot.in_waiting_room -> bot.inmeeting -> bot.recording
-            -> bot.leaving -> bot.stopped          (terminal)
+            -> bot.leaving -> bot.stopped          (terminal, see below)
             -> manifest.completed -> audio.processed
-            -> transcription.processed | transcription.failed
+            -> transcription.processed | transcription.failed | transcription.skipped
             -> video.processed -> bot.done -> data_deletion
 ```
 
-Five things that break handlers:
+You may also see `bot.scheduled`, `bot.uploading`, `bot.transcriptionready`,
+`audio.skipped`, `manifest.skipped` and `participant_events.join` / `.leave`. On Zoom,
+`bot.recording_permission_allowed` / `_denied` can fire before `bot.recording`.
 
-1. **`bot.stopped` is the only terminal event.** There is no `bot.kicked`,
-   `bot.denied`, `bot.notallowed` or `bot.failed`. The reason is in `bot_status`:
-   `Stopped` (normal) | `NotAllowed` (waiting-room timeout) | `Denied` (host refused)
-   | `Error` (crash).
-2. **`bot.stopped` always has `status_code: 200`**, even when the bot never got in.
-   Do not treat 200 as "it worked" - read `bot_status`.
-   `500` appears only on `transcription.failed` and a failed `bot.done`.
-3. **`bot.error` is NOT terminal.** It means a streaming provider hiccuped upstream;
-   the bot is still in the meeting. Do not tear down state on it.
-4. **Streaming-only providers end at `audio.processed`** and never emit `bot.done`.
-   Waiting for `bot.done` on those hangs forever.
-5. **`transcript_id` is not in the webhook.** Get it from the `create_bot` response,
-   `get_bot_detail`, or `list_transcriptions`.
+Four things that break handlers:
+
+1. **Terminals are two-layer.** Every ending arrives once with `event: "bot.stopped"`.
+   `bot_event` says why:
+
+   | `bot_event` | Meaning | `status_code` |
+   |---|---|---|
+   | `bot.stopped` | Clean exit | 200 |
+   | `bot.kicked` | A participant removed the bot | 200 |
+   | `bot.notallowed` | Waiting-room timeout, nobody admitted it | 500 |
+   | `bot.denied` | A host refused entry | 500 |
+   | `bot.failed` | Unexpected error | usually 500 |
+
+   Branch on `bot_event`, not `bot_status`: a kick and a clean exit both report
+   `bot_status: "Stopped"`, and failure statuses arrive as `FAILED`, `Failed` or `ERROR`.
+2. **Do not read `status_code: 200` as success of the whole meeting.** A kicked bot
+   sends 200. Check `bot_event`.
+3. **Streaming-only providers produce no post-call transcript.** No
+   `transcription.processed` fires, but `bot.done` still does. Do not wait on a
+   transcript for those bots.
+4. **`transcript_id` is not in any webhook.** Get it from the `create_bot` response or
+   `get_bot_detail`, or let the `get_transcript` tool resolve it from the `bot_id`.
 
 ## Writing the handler
 
-- **Return 200 fast.** Acknowledge, then do the real work asynchronously. Slow handlers
-  cause retries and duplicate processing.
-- **Expect redelivery.** Dedupe on `bot_id` + `event`. `bot.error` can legitimately
-  repeat, so include a hash of `message` in its dedupe key.
+- **Return 2xx fast.** Acknowledge, then do the real work asynchronously.
+- **Deduplicate.** Key on `bot_id` + `event` + `bot_event` + `timestamp`.
 - **Capture the raw body before JSON parsing** if you plan to verify signatures -
   re-serializing the parsed object will not match the signature.
 - **Do not assume ordering.** Treat lifecycle states as a forward-only ladder and
@@ -90,10 +101,10 @@ Two failure modes to check before debugging your code:
 | Symptom | Likely cause |
 |---|---|
 | No events at all | `callback_url` not public HTTPS, or not set on that bot |
-| Events stop after `audio.processed` | Streaming-only provider - there is no `bot.done` |
-| Handler never runs but delivery succeeds | Branching on `bot_event` instead of `event` |
-| Everything looks successful but no recording | `bot.stopped` with `bot_status` `NotAllowed` or `Denied` |
-| Duplicate processing | No dedupe on `bot_id` + `event`, or handler too slow |
+| No `transcription.processed` | Streaming-only provider: the transcript was live, there is no post-call one |
+| Kicks treated as normal exits | Branching on `bot_status` instead of `bot_event` |
+| Bot never joined | `bot.stopped` with `bot_event` `bot.notallowed` or `bot.denied` |
+| Duplicate processing | No dedupe key, or a slow handler |
 
 ## Reference
 

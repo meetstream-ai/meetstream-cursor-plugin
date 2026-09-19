@@ -29,7 +29,7 @@ Ask for the meeting link if the user has not given one. Sensible defaults:
 - `bot_name` - something recognisable to the humans in the call, e.g. "Acme Notetaker".
   Never leave this blank; a bot with no name looks like an intruder.
 - `record_video` - default off. Turn it on only if the user wants video, since it
-  costs more and takes longer to process.
+  takes longer to process.
 - Transcription provider - `deepgram` (model `nova-3`) is the sensible default for
   English. See the `meeting-brief` skill for other languages and diarization.
 

@@ -25,8 +25,12 @@ in a tight loop.
 Separate tracks per speaker are far more useful than a mixed recording for diarization,
 per-speaker analysis, or re-mixing. Ask for them **at bot creation**:
 
-- `audio_separate_streams: true` - one audio track per participant
-- `video_separate_streams: true` - one video track per participant
+| | MCP `create_bot` tool | REST `create_bot` body |
+|---|---|---|
+| One audio track per participant | `separate_audio_streams: true` | `audio_separate_streams: true` |
+| One video track per participant | `separate_video_streams: true` | `video_separate_streams: true` |
+
+The names differ between the two surfaces; use the one that matches how you are calling.
 
 You cannot add this after the fact; the bot has to be told before it records.
 
@@ -35,9 +39,10 @@ These endpoints return **HTTP 202 while the bot is still in the meeting**. That 
 
 ## Video
 
-Video is off by default. Set `video_required: true` on `create_bot`. It costs more and
-takes longer to process, so do not enable it reflexively - ask whether they actually
-need pictures.
+The defaults differ by surface. The MCP `create_bot` tool records **audio only** unless
+you pass `record_video: true`. The REST API's `video_required` **defaults to `true`**, so
+send `video_required: false` for transcript-only bots. Video takes longer to process, so
+only record it when the user actually needs pictures.
 
 ## Pausing mid-meeting
 
@@ -51,15 +56,14 @@ discussion, someone reading out a credential. The bot stays in the meeting.
 
 ## Retention
 
-Set on `create_bot`:
+Set on `create_bot`: `retention_hours` on the MCP tool, or on the REST body:
 
 ```json
 "recording_config": { "retention": { "type": "timed", "hours": 72 } }
 ```
 
-Omit it and media is retained per the account default, with storage billed by volume.
-For anything containing customer conversations, set an explicit window - it is the
-cheapest compliance win available.
+Omit it and media is kept for the default 30 days (720 hours). For anything containing
+customer conversations, set an explicit, shorter window.
 
 ## Deleting
 
@@ -98,4 +102,4 @@ Objects land under `{prefix}/{bot_id}_<file>`.
 - [Per-participant audio](https://docs.meetstream.ai/guides/transcription-recordings/per-participant-audio) · [Per-participant video](https://docs.meetstream.ai/guides/transcription-recordings/per-participant-video)
 - [Pause and resume recording](https://docs.meetstream.ai/guides/features/pause-resume-recording)
 - [Usage and retention](https://docs.meetstream.ai/guides/features/usage-and-retention)
-- [Custom storage configurations](https://docs.meetstream.ai/guides/features/custom-storage-configurations)
+- [Custom storage configurations](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3)

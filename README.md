@@ -85,13 +85,13 @@ Most meeting bots sit silently and record. **MIA** joins as a real participant t
 
 | Choose | When |
 |---|---|
-| [`pipeline`](https://docs.meetstream.ai/guides/mia/mia-configurations) | You want to pick each provider, use a **wake word**, or tune interruptions and VAD |
-| [`realtime`](https://docs.meetstream.ai/guides/mia/create-mia) | You want lowest latency with a single speech-to-speech model |
+| [`pipeline`](https://docs.meetstream.ai/guides/mia/mia-custom-configurations) | You want to pick each provider, use a **wake word**, or tune interruptions and VAD |
+| [`realtime`](https://docs.meetstream.ai/guides/mia/create-an-agent) | You want lowest latency with a single speech-to-speech model |
 
 > [!IMPORTANT]
 > Attaching an agent takes **only `agent_config_id`**. Passing `socket_connection_url` or `live_audio_required` alongside it is the single most common cause of a silent agent - those are for bring-your-own-bridge setups. The [`mia-voice-agents`](skills/mia-voice-agents/SKILL.md) skill enforces this.
 
-Two fields worth setting that most people miss: **`boostwords`** on the transcriber (fixes "it mishears our company name") and **`mcp_servers`** on the agent (turns a talking bot into one that does work). Full reference: [Create MIA](https://docs.meetstream.ai/guides/mia/create-mia) · [MIA configurations](https://docs.meetstream.ai/guides/mia/mia-configurations) · [API](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config).
+Two fields worth setting that most people miss: **`boostwords`** on the transcriber (fixes "it mishears our company name") and **`mcp_servers`** on the agent (turns a talking bot into one that does work). Full reference: [Create MIA](https://docs.meetstream.ai/guides/mia/create-an-agent) · [MIA configurations](https://docs.meetstream.ai/guides/mia/mia-custom-configurations) · [API](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config).
 
 ## 🧰 The 19 tools
 
@@ -115,7 +115,7 @@ Two fields worth setting that most people miss: **`boostwords`** on the transcri
 
 | Tool | Does | API |
 |---|---|---|
-| `get_transcript` | Fetch by `transcript_id` | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/transcription/get-transcription) |
+| `get_transcript` | Fetch by `bot_id`; resolves the `transcript_id` for you | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/transcription/get-transcription) |
 | `list_transcriptions` | All transcripts for a bot | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/transcription/get-bot-transcriptions) |
 | `transcribe_audio` | Re-transcribe stored audio | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/transcription/transcribe-bot-audio) |
 
@@ -156,7 +156,7 @@ Ten skills teach the agent how to use MeetStream *well*. They load automatically
 |---|---|---|
 | [**join-meeting**](skills/join-meeting/SKILL.md) | "join this meeting", "send a bot to…", "record this call" | [First bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
 | [**meeting-brief**](skills/meeting-brief/SKILL.md) | "summarize that meeting", "action items", "who talked the most" | [Speaker timeline](https://docs.meetstream.ai/guides/features/participants-and-speaker-timeline) |
-| [**mia-voice-agents**](skills/mia-voice-agents/SKILL.md) | "voice agent", "talking bot", "wake word", "MIA" | [Create MIA](https://docs.meetstream.ai/guides/mia/create-mia) |
+| [**mia-voice-agents**](skills/mia-voice-agents/SKILL.md) | "voice agent", "talking bot", "wake word", "MIA" | [Create MIA](https://docs.meetstream.ai/guides/mia/create-an-agent) |
 | [**webhooks**](skills/webhooks/SKILL.md) | "webhook", "callback_url", "my webhook isn't firing" | [Events](https://docs.meetstream.ai/guides/webhooks/webhooks-and-events) · [Signatures](https://docs.meetstream.ai/guides/webhooks/webhook-signature-verification) |
 | [**realtime-streaming**](skills/realtime-streaming/SKILL.md) | "live captions", "stream the audio", "websocket" | [Live audio](https://docs.meetstream.ai/guides/websockets/real-time-audio-streaming) · [Control patterns](https://docs.meetstream.ai/guides/websockets/meeting-control-patterns) |
 | [**recordings-and-media**](skills/recordings-and-media/SKILL.md) | "download the recording", "per-participant audio", "retention" | [Retrieve](https://docs.meetstream.ai/guides/transcription-recordings/retrieve-recordings) · [Per-participant](https://docs.meetstream.ai/guides/transcription-recordings/per-participant-audio) |
@@ -171,9 +171,9 @@ Ten skills teach the agent how to use MeetStream *well*. They load automatically
 The tools are just an API surface. The skills carry the hard-won details that stop an agent guessing wrong:
 
 - **MIA takes only `agent_config_id`** - adding bridge URLs silences the agent
-- The webhook envelope key is **`event`**, and **`bot.stopped`** is the single terminal event, always at `status_code: 200`
-- **Streaming-only providers never emit `bot.done`** and return `202` forever on a post-call transcript fetch
-- Transcripts are fetched by **`transcript_id`**, and segments use **`transcript`**, not `text`
+- Every ending arrives once as **`event: "bot.stopped"`**, with the reason in **`bot_event`** (`bot.kicked`, `bot.notallowed`, `bot.denied`, `bot.failed`); failures carry `status_code: 500`
+- **Streaming-only providers produce no post-call transcript**: no `transcription.processed`, and a transcript fetch returns `202` indefinitely
+- `get_transcript` takes the **`bot_id`** (REST takes the `transcript_id`), and segments use **`transcript`**, not `text`
 - **`202` and `507` are not errors** - 202 means poll again, 507 means your idempotent retry replayed
 - **REST uses `Authorization: Token`, the MCP server uses `Bearer`** - mixing them up returns 401
 - `in_call_recording_timeout` has a hard **600 second floor**
@@ -181,7 +181,7 @@ The tools are just an API surface. The skills carry the hard-won details that st
 </details>
 
 > [!NOTE]
-> Some capabilities are **REST-only** and deliberately not MCP tools: [MIA agent configs](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config), [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar), [Google signed-in bots](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots), [Zoom OAuth/OBF](https://docs.meetstream.ai/guides/app-integrations/zoom-obf-implementation), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations) and [pause/resume](https://docs.meetstream.ai/guides/features/pause-resume-recording). The skills know the difference and route to REST instead of inventing a tool that doesn't exist.
+> Some capabilities are **REST-only** and deliberately not MCP tools: [MIA agent configs](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config), [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar), [Google signed-in bots](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots), [Zoom authenticated joins](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3) and [pause/resume](https://docs.meetstream.ai/guides/features/pause-resume-recording). The skills know the difference and route to REST instead of inventing a tool that doesn't exist.
 
 ## 🔐 Your API key
 

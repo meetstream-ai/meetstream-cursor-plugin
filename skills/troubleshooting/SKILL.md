@@ -52,11 +52,15 @@ original bot back. No duplicate, no double charge. Accept `201` and `507` as suc
 
 ## "The bot never joined"
 
-Check the terminal `bot.stopped` event's `bot_status`, not the HTTP response:
+Check the terminal webhook's `bot_event` (every ending arrives as `event: "bot.stopped"`),
+not the HTTP response:
 
-- `NotAllowed` - waiting-room timeout. Nobody let it in.
-- `Denied` - a host refused it.
-- `Error` - it crashed; create a fresh one.
+- `bot.notallowed` - waiting-room timeout. Nobody let it in.
+- `bot.denied` - a host refused it.
+- `bot.kicked` - a participant removed it.
+- `bot.failed` - it crashed; create a fresh one.
+
+Without webhooks, `get_bot_status` shows `NotAllowed`, `Denied` or `Error`.
 
 If there was no `bot.stopped` at all and no events ever arrived, the problem is your
 webhook, not the bot. See the `webhooks` skill.
@@ -67,7 +71,8 @@ In order:
 
 1. Did `transcription.processed` fire? If `transcription.failed` fired instead, read its
    `message` - most often a provider API key issue on your account.
-2. Are you fetching by **`transcript_id`**, not `bot_id`?
+2. Right identifier? The MCP `get_transcript` tool takes the **`bot_id`**. The REST
+   endpoint takes the **`transcript_id`**, not the `bot_id`.
 3. Are you reading `segment.transcript`, not `segment.text`? Wrong field looks like an
    empty transcript.
 4. Was it a streaming-only provider? Then there is no post-call transcript. Use

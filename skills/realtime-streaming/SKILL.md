@@ -32,8 +32,8 @@ transcription config (`deepgram_streaming`, `assemblyai_streaming`,
 the API returns HTTP 400 telling you exactly that.
 
 The critical trade-off: **streaming-only providers produce no post-call transcript.**
-The bot finishes at `audio.processed`, never emits `bot.done`, and a post-call
-transcript fetch returns HTTP 202 forever. Treat the live stream as the record.
+`transcription.processed` never fires for these bots (though `bot.done` still does), and a
+post-call transcript fetch returns HTTP 202 indefinitely. Treat the live stream as the record.
 
 If the user wants both live captions *and* a clean transcript afterwards, run a
 streaming provider for the live feed and then call `transcribe_audio` (MCP tool) after

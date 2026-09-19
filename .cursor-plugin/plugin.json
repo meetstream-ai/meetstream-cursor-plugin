@@ -2,7 +2,7 @@
   "name": "meetstream",
   "displayName": "MeetStream",
   "description": "Send AI meeting bots into Zoom, Google Meet and Microsoft Teams. Record, transcribe and summarize calls, stream transcripts and audio live, auto-join from your calendar, and deploy MIA voice agents that speak and answer in the meeting - 19 tools over the hosted MeetStream MCP server.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "MeetStream.ai",
     "email": "hello@meetstream.ai"
@@ -45,6 +45,8 @@
         "description": "Your MeetStream API key. Create one at https://app.meetstream.ai/api-key. It is sent per request to the hosted MeetStream MCP server and is never stored in this repository."
       }
     },
-    "required": ["MEETSTREAM_API_KEY"]
+    "required": [
+      "MEETSTREAM_API_KEY"
+    ]
   }
 }

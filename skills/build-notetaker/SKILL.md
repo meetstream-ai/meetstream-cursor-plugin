@@ -36,21 +36,19 @@ create_bot -> bot.joining -> bot.in_waiting_room -> bot.inmeeting -> bot.recordi
 
 Non-obvious things that break integrations:
 
-- **The webhook envelope key is `event`.** Any documentation that says `bot_event`
-  is wrong.
-- **`bot.stopped` is the single terminal event.** There is no `bot.kicked`,
-  `bot.denied` or `bot.failed`. The reason lives in `bot_status`:
-  `Stopped` | `NotAllowed` (waiting-room timeout) | `Denied` (host refused) | `Error`.
-- **`bot.stopped` always carries `status_code: 200`**, whatever the reason.
-  `500` appears only on `transcription.failed` and a failed `bot.done`.
-- **`bot.error` is not terminal.** It signals a streaming-provider problem; the bot
-  keeps running.
-- **Streaming-only providers end at `audio.processed`** and never emit `bot.done`.
-  If you wait for `bot.done` on those, you wait forever.
+- **Every webhook carries `event`; most also carry `bot_event`** with the specific name.
+- **Terminals are two-layer.** Every ending arrives once with `event: "bot.stopped"`;
+  `bot_event` says why: `bot.stopped` (clean, 200), `bot.kicked` (200), `bot.notallowed`
+  (waiting-room timeout, 500), `bot.denied` (host refused, 500), `bot.failed` (usually 500).
+  Branch on `bot_event`: a kick and a clean exit both report `bot_status: "Stopped"`.
+- **Every event carries a `timestamp`.**
+- **Streaming-only providers produce no post-call transcript.** `transcription.processed`
+  never fires for them, though `bot.done` still does.
 
 ## Getting the transcript (the classic mistake)
 
-Transcripts are fetched by **`transcript_id`**, not `bot_id`.
+Over REST, transcripts are fetched by **`transcript_id`**, not `bot_id`. (The MCP
+`get_transcript` tool is different: it takes the `bot_id` and resolves the id for you.)
 
 1. `create_bot` returns a `transcript_id` (null for `meeting_captions`).
 2. Wait for the `transcription.processed` webhook.
@@ -75,7 +73,7 @@ returns `200`, and the same key with a different meeting returns `409`.
 ## Webhooks in local development
 
 `callback_url` must be a public HTTPS URL. Use an ngrok or cloudflared tunnel while
-developing. Handle redeliveries: dedupe on `bot_id` + `event`, and return 200 quickly,
+developing. Deduplicate on `bot_id` + `event` + `bot_event` + `timestamp`, and return 2xx quickly,
 doing real work asynchronously.
 
 ## Calendar auto-join
