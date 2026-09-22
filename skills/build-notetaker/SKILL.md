@@ -44,6 +44,13 @@ Non-obvious things that break integrations:
 - **Every event carries a `timestamp`.**
 - **Streaming-only providers produce no post-call transcript.** `transcription.processed`
   never fires for them, though `bot.done` still does.
+- **`video_required` defaults to `true`.** Send `"video_required": false` on every bot
+  unless the user explicitly asked to record video; an omitted field records video.
+- **When video is on, send `recording_config.video_layout: "speaker_view"`.** The API
+  defaults to `"grid_view"`. Those two are the only valid values, the field is ignored
+  when video is off, Google Meet, Teams and Zoom accept both, and WhatsApp is grid only.
+- **Per-participant video is opt-in only.** Never set `video_separate_streams` unless the
+  user explicitly asked for it. Per-participant `audio_separate_streams` is unaffected.
 
 ## Getting the transcript (the classic mistake)
 

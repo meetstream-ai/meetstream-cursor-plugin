@@ -32,6 +32,11 @@ per-speaker analysis, or re-mixing. Ask for them **at bot creation**:
 
 The names differ between the two surfaces; use the one that matches how you are calling.
 
+**Per-participant video is opt-in only.** Never set `video_separate_streams` /
+`separate_video_streams` unless the user explicitly asked for per-participant or
+per-speaker video; it multiplies storage and processing per participant. Per-participant
+audio is unaffected by that rule and stays a good default suggestion.
+
 You cannot add this after the fact; the bot has to be told before it records.
 
 These endpoints return **HTTP 202 while the bot is still in the meeting**. That is
@@ -39,10 +44,28 @@ These endpoints return **HTTP 202 while the bot is still in the meeting**. That 
 
 ## Video
 
-The defaults differ by surface. The MCP `create_bot` tool records **audio only** unless
-you pass `record_video: true`. The REST API's `video_required` **defaults to `true`**, so
-send `video_required: false` for transcript-only bots. Video takes longer to process, so
-only record it when the user actually needs pictures.
+**Video is off by default.** Only turn it on when the user explicitly asks to record
+video. Audio only is faster to process and smaller to store, and transcripts, summaries,
+diarization and speaker timelines all work without it.
+
+The surfaces differ. The MCP `create_bot` tool records **audio only** unless you pass
+`record_video: true`. The REST API's `video_required` **defaults to `true`**, so send
+`"video_required": false` explicitly; an omitted field records video.
+
+### Layout: send `speaker_view` when video is on
+
+| | MCP `create_bot` tool | REST `create_bot` body |
+|---|---|---|
+| Layout | `video_layout: "speaker_view"` | `recording_config: { "video_layout": "speaker_view" }` |
+
+- Values are exactly `"speaker_view"` or `"grid_view"`. Nothing else validates.
+- **The REST API defaults to `"grid_view"`**, so `"speaker_view"` has to be sent
+  explicitly. Only use `"grid_view"` when the user asks for grid or gallery view.
+- Ignored when video is off: an audio-only bot never runs the compositor.
+- Google Meet, Teams and Zoom accept both values. WhatsApp accepts only `"grid_view"`,
+  and any other platform rejects the field.
+- Speaker view follows the active speaker, which is what people want for review and
+  clipping. Grid view is a composited mosaic of everyone.
 
 ## Pausing mid-meeting
 

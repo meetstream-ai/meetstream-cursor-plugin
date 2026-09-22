@@ -28,8 +28,15 @@ Ask for the meeting link if the user has not given one. Sensible defaults:
 
 - `bot_name` - something recognisable to the humans in the call, e.g. "Acme Notetaker".
   Never leave this blank; a bot with no name looks like an intruder.
-- `record_video` - default off. Turn it on only if the user wants video, since it
-  takes longer to process.
+- `record_video` - default off. Turn it on only if the user explicitly asks for video,
+  since it takes longer to process and transcripts, summaries and speaker timelines all
+  work without it. On REST the field is `video_required`, which defaults to `true`, so
+  send `"video_required": false` explicitly.
+- `video_layout` - only when video is on. Send `"speaker_view"` unless the user asks for
+  grid or gallery view; the REST API defaults to `"grid_view"`. Those two are the only
+  valid values, it is ignored when video is off, and WhatsApp accepts only `"grid_view"`.
+- `separate_video_streams` - leave unset. Per-participant video is opt-in only; set it
+  only when the user explicitly asks for it. Per-participant audio is unaffected.
 - Transcription provider - `deepgram` (model `nova-3`) is the sensible default for
   English. See the `meeting-brief` skill for other languages and diarization.
 
