@@ -80,7 +80,7 @@ Use `https://mcp.meetstream.ai/sse` with the same sign-in or key options. Everyt
 There is no build and no test runner. The plugin is declarative.
 
 ```
-.cursor-plugin/plugin.json   manifest, MEETSTREAM_API_KEY plugin variable
+.cursor-plugin/plugin.json   manifest (no variables: sign-in is OAuth)
 mcp.json                     Cursor connector  -> mcp.meetstream.ai
 .mcp.json                    Claude Code / agent-plugin connector
 skills/<name>/SKILL.md        10 skills
@@ -96,10 +96,8 @@ Restart Cursor. The symlink means edits apply on the next restart with no re-cop
 
 ### Manifest rules
 
-- The API key is declared as a **plugin variable** and interpolated as `${MEETSTREAM_API_KEY}`. It is set in the Cursor dashboard and must never appear in this repo.
-- `variables` must be a JSON-Schema object (`{"type":"object","properties":{...}}`).
-- Interpolation only happens in `command`, `args`, `env`, `url` and `headers`.
-- `mcp.json` must use **`Authorization: Bearer`**. `Token` returns 401 against the MCP server.
+- The server entry in `mcp.json` and `.mcp.json` is **the URL only**. Cursor signs the user in with OAuth (the server supports dynamic client registration), so the plugin declares **no `variables` and no headers**. Do not add a key variable or an `Authorization` header back.
+- A key must never appear in this repo. If a user wants their own key, it goes in their own `~/.cursor/mcp.json` as `Authorization: Bearer ...`; `Token` returns 401 against the MCP server.
 
 ### Skill rules
 
@@ -137,7 +135,7 @@ These are live-verified. Do not "fix" code that follows them.
 ## Before you finish
 
 - Every skill's frontmatter `name` matches its directory.
-- Every `${VAR}` placeholder is declared in `variables`.
+- There are no `${VAR}` placeholders and no `variables` block (sign-in is OAuth).
 - All three JSON files parse.
 - Every link resolves.
 - State which MCP tools or docs you relied on, what changed, and what you did not verify.

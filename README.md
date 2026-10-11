@@ -12,7 +12,7 @@ Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **
 [![Platforms](https://img.shields.io/badge/Zoom%20%C2%B7%20Meet%20%C2%B7%20Teams-supported-2c8a61?style=flat-square)](https://docs.meetstream.ai/guides/introduction/how-bots-work)
 [![License](https://img.shields.io/badge/license-MIT-867c72?style=flat-square)](LICENSE)
 
-[Install](#-install) · [Try it](#-what-you-can-ask) · [MIA](#-mia-voice-agents-that-actually-talk) · [Tools](#-the-19-tools) · [Skills](#-skills) · [Security](#-your-api-key) · [Docs](https://docs.meetstream.ai)
+[Install](#-install) · [Try it](#-what-you-can-ask) · [MIA](#-mia-voice-agents-that-actually-talk) · [Tools](#-the-19-tools) · [Skills](#-skills) · [Security](#-sign-in-and-keys) · [Docs](https://docs.meetstream.ai)
 
 </div>
 
@@ -25,8 +25,8 @@ Nothing to run locally. No server to host. The MCP server is hosted at `https://
 | | Step |
 |:--:|---|
 | **1** | Search **"MeetStream"** in the Cursor marketplace and click **Add to Cursor** |
-| **2** | Grab a key from [app.meetstream.ai/api-key](https://app.meetstream.ai/api-key) |
-| **3** | Paste it under **Plugins → Configure → `MEETSTREAM_API_KEY`** |
+| **2** | In **Cursor Settings → MCP**, click **Connect** next to `meetstream` |
+| **3** | Sign in at app.meetstream.ai and click **Allow** - no key to copy |
 
 That's it. Ask your agent to *"list my MeetStream bots"* to confirm it's wired up.
 
@@ -183,21 +183,24 @@ The tools are just an API surface. The skills carry the hard-won details that st
 > [!NOTE]
 > Some capabilities are **REST-only** and deliberately not MCP tools: [MIA agent configs](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config), [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar), signed-in bot account management for [Google](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots) and [Teams](https://docs.meetstream.ai/guides/app-integrations/teams-signed-in-bots) (sending a signed-in bot works over MCP via `create_bot`'s `google_login_domain` / `teams_login_domain`, MCP server 0.3.2+), [Zoom authenticated joins](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3) and [pause/resume](https://docs.meetstream.ai/guides/features/pause-resume-recording). The skills know the difference and route to REST instead of inventing a tool that doesn't exist.
 
-## 🔐 Your API key
+## 🔐 Sign-in and keys
 
-Declared as a **plugin variable** and set in the Cursor dashboard - never in this repo, never in a committed file. Cursor interpolates it into the `Authorization` header per request. The hosted server is multi-tenant and stores no key of its own.
+There is no key to paste. The plugin's server entry is just the URL, so Cursor signs you in with OAuth: click **Connect**, sign in at app.meetstream.ai and click **Allow**. The dashboard then creates an API key for this connection, named after Cursor. To disconnect, delete that key on the [API keys page](https://app.meetstream.ai/api-key). The hosted server is multi-tenant and stores no key of its own.
 
-Rather not paste a key? Add the hosted server by URL instead, with no header, in `~/.cursor/mcp.json`:
+Prefer to manage a key yourself (for example in CI)? Add the server to `~/.cursor/mcp.json` with a header instead, and turn off the plugin's own `meetstream` server so the tools do not appear twice:
 
 ```json
 {
   "mcpServers": {
-    "meetstream": { "url": "https://mcp.meetstream.ai/mcp" }
+    "meetstream": {
+      "url": "https://mcp.meetstream.ai/mcp",
+      "headers": { "Authorization": "Bearer ${env:MEETSTREAM_API_KEY}" }
+    }
   }
 }
 ```
 
-Click **Connect** next to it in Cursor Settings → MCP, sign in at app.meetstream.ai and click **Allow**; the dashboard creates a key for that connection. Turn off the plugin's own `meetstream` server there so the tools do not appear twice. The skills in this plugin work with either server. The MCP server is hosted only: do not use `npx @meetstream/mcp`, which is the old Node server, frozen at 0.3.0.
+The MCP server is hosted only: do not use `npx @meetstream/mcp`, which is the old Node server, frozen at 0.3.0.
 
 Auth reference: [Authentication](https://docs.meetstream.ai/api-reference/authentication) · [MCP server setup](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server)
 
@@ -211,7 +214,7 @@ ln -s "$PWD/meetstream-cursor-plugin" ~/.cursor/plugins/local/meetstream
 Restart Cursor. The symlink means edits apply on the next restart with no re-copying.
 
 ```
-.cursor-plugin/plugin.json   manifest + MEETSTREAM_API_KEY variable
+.cursor-plugin/plugin.json   manifest (no variables: sign-in is OAuth)
 mcp.json                     Cursor connector  -> mcp.meetstream.ai
 .mcp.json                    Claude Code / agent-plugin connector
 skills/*/SKILL.md            10 skills
