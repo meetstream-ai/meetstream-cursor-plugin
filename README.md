@@ -187,14 +187,17 @@ The tools are just an API surface. The skills carry the hard-won details that st
 
 Declared as a **plugin variable** and set in the Cursor dashboard - never in this repo, never in a committed file. Cursor interpolates it into the `Authorization` header per request. The hosted server is multi-tenant and stores no key of its own.
 
-Prefer the key never leaving your machine? Run the open-source server locally over stdio instead (needs [Go](https://go.dev/dl/) 1.25+):
+Rather not paste a key? Add the hosted server by URL instead, with no header, in `~/.cursor/mcp.json`:
 
-```bash
-go install github.com/meetstream-ai/meetstream-mcp/go/cmd/meetstream-mcp@latest
-# installs to $(go env GOPATH)/bin/meetstream-mcp and reads MEETSTREAM_API_KEY from its environment
+```json
+{
+  "mcpServers": {
+    "meetstream": { "url": "https://mcp.meetstream.ai/mcp" }
+  }
+}
 ```
 
-Then point `~/.cursor/mcp.json` at that binary by its absolute path, with `MEETSTREAM_API_KEY` in its `env` ([config example](https://github.com/meetstream-ai/meetstream-mcp#cursor)). Do not use `npx @meetstream/mcp`: that npm package is the old Node server, frozen at 0.3.0.
+Click **Connect** next to it in Cursor Settings → MCP, sign in at app.meetstream.ai and click **Allow**; the dashboard creates a key for that connection. Turn off the plugin's own `meetstream` server there so the tools do not appear twice. The skills in this plugin work with either server. The MCP server is hosted only: do not use `npx @meetstream/mcp`, which is the old Node server, frozen at 0.3.0.
 
 Auth reference: [Authentication](https://docs.meetstream.ai/api-reference/authentication) · [MCP server setup](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server)
 
