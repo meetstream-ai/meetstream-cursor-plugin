@@ -2,10 +2,7 @@
   "mcpServers": {
     "meetstream": {
       "type": "http",
-      "url": "https://mcp.meetstream.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer ${MEETSTREAM_API_KEY}"
-      }
+      "url": "https://mcp.meetstream.ai/mcp"
     }
   }
 }
