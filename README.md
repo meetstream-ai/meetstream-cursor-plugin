@@ -187,11 +187,14 @@ The tools are just an API surface. The skills carry the hard-won details that st
 
 Declared as a **plugin variable** and set in the Cursor dashboard - never in this repo, never in a committed file. Cursor interpolates it into the `Authorization` header per request. The hosted server is multi-tenant and stores no key of its own.
 
-Prefer the key never leaving your machine? Run the server locally over stdio instead:
+Prefer the key never leaving your machine? Run the open-source server locally over stdio instead (needs [Go](https://go.dev/dl/) 1.25+):
 
 ```bash
-npx -y @meetstream/mcp     # reads MEETSTREAM_API_KEY from your environment
+go install github.com/meetstream-ai/meetstream-mcp/go/cmd/meetstream-mcp@latest
+# installs to $(go env GOPATH)/bin/meetstream-mcp and reads MEETSTREAM_API_KEY from its environment
 ```
+
+Then point `~/.cursor/mcp.json` at that binary by its absolute path, with `MEETSTREAM_API_KEY` in its `env` ([config example](https://github.com/meetstream-ai/meetstream-mcp#cursor)). Do not use `npx @meetstream/mcp`: that npm package is the old Node server, frozen at 0.3.0.
 
 Auth reference: [Authentication](https://docs.meetstream.ai/api-reference/authentication) · [MCP server setup](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server)
 
@@ -215,7 +218,7 @@ skills/*/SKILL.md            10 skills
 
 | | What | Where |
 |:--:|---|---|
-| 🔌 | **MCP server** - the same 19 tools for any MCP client | [`@meetstream/mcp`](https://www.npmjs.com/package/@meetstream/mcp) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server) |
+| 🔌 | **MCP server** - the same 19 tools for any MCP client, hosted at `mcp.meetstream.ai/mcp` | [github](https://github.com/meetstream-ai/meetstream-mcp) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server) |
 | ⌨️ | **CLI** - drive MeetStream from your terminal | [`@meetstream/cli`](https://www.npmjs.com/package/@meetstream/cli) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-cli) |
 | 🤖 | **Claude Code plugin** - `/plugin marketplace add meetstream-ai/claude-plugin` | [docs](https://docs.meetstream.ai/build-with-ai/claude-integration) |
 | 🧪 | **Labs** - runnable end-to-end templates | [github](https://github.com/meetstream-ai/labs) |
