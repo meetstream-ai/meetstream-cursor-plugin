@@ -3,7 +3,7 @@ name: platform-setup
 description: >
   Platform-specific setup and quirks for Zoom, Google Meet and Microsoft
   Teams. Use when the user says "the bot can't join Zoom", "waiting room",
-  "the host has to admit it", "recording permission", "Zoom app setup", "OBF",
+  "the host has to admit it", "recording permission", "Zoom setup", "do I need a Zoom app", "OBF",
   "signed-in bots", "the bot shows as guest", "Teams lobby", or hits a
   platform-specific failure rather than an API error.
 ---
@@ -42,21 +42,32 @@ Zoom does the one thing the others do not: it can require **explicit recording
 permission** from the host. If nobody grants it,
 `recording_permission_denied_timeout` decides how long the bot waits before giving up.
 
-Zoom also needs app-level setup before bots can join meetings outside your own account:
+**Zoom needs no setup.** A Zoom bot needs only the MeetStream API key and the meeting
+link: no Zoom Marketplace app, no Zoom app credentials, no Meeting SDK keys, no Zoom OAuth
+connection and no tokens. Omit `zoom` (or send `{}`) and the same `create_bot` request
+works as it does for Google Meet and Teams. Do not tell the user to create a Zoom app
+before their first bot.
 
-- A Zoom Marketplace app, with credentials added on the MeetStream side.
-- Development mode restricts bots to meetings hosted by the app owner. Production use
-  requires submitting the app for review.
-- **Authenticated joins** use the `zoom` object on the REST `create_bot` request, with
-  exactly one of `zak_url` (the bot joins signed in as a Zoom user) or `obf_url` (the bot
-  joins on behalf of a user who is already in the meeting). Each is an HTTPS URL on
-  **your** server that returns a fresh token when MeetStream calls it at join time.
-  You run the Zoom OAuth flow and keep the refresh tokens; MeetStream does not store them.
+Your own Zoom app is **optional**. Saving its Client ID and Client Secret in the MeetStream
+dashboard (Integrations > Zoom) adds:
+
+- **Authenticated joins** through the `zoom` object on the REST `create_bot` request, with
+  exactly one of `zak_url` (the bot joins signed in as a Zoom user, can enter sign-in-only
+  meetings and join before the host) or `obf_url` (the bot joins on behalf of a user who is
+  already in the meeting). Each is an HTTPS URL on **your** server that returns a fresh
+  token when MeetStream calls it at join time. You run the Zoom OAuth flow and keep the
+  refresh tokens; MeetStream does not store them.
+- Per-participant **camera** video (without your app, per-participant video contains
+  screen shares only; per-participant audio works either way).
+- Live video into the bot camera, and MIA agent camera or avatar video.
+
+With your own app, development mode restricts bots to meetings hosted by the app owner;
+joining other accounts' meetings with your app needs Zoom's review and a ZAK or OBF token.
+
 - `use_zoom_obf` and `zoom_oauth_connection_user_id` are **rejected** by the API, and the
   old `/zoom/oauth/*` connection endpoints are no longer documented. Do not use them.
-- Omit `zoom` (or send `{}`) for a guest join.
 
-Full walkthrough: https://docs.meetstream.ai/guides/app-integrations/zoom-marketplace-app-setup
+Optional app walkthrough: https://docs.meetstream.ai/guides/app-integrations/zoom-marketplace-app-setup
 
 ## Google Meet
 
