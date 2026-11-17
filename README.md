@@ -104,7 +104,7 @@ Two fields worth setting that most people miss: **`boostwords`** on the transcri
 | `list_bots` | List your bots | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/list-bots) |
 | `get_bot_status` | Where it is right now | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/get-bot-status) |
 | `get_bot_detail` | Full record, incl. `transcript_id` | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/get-bot-details) |
-| `get_bot_summary` | AI summary of the meeting | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/get-bot-summary) |
+| `get_bot_summary` | Says there is no built-in summary; summarize from `get_transcript` | — |
 | `remove_bot` | Make it leave, **keep** the data | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/remove-bot) |
 | `delete_bot_data` | Permanently erase media + transcripts | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/delete-bot-data) |
 
