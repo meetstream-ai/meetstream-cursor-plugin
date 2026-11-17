@@ -4,11 +4,11 @@
 
 **Put an AI bot in your meetings from inside your editor.**
 
-Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **Microsoft Teams** - or deploy a [**MIA voice agent**](#-mia-voice-agents-that-actually-talk) that listens and *talks back* in the room. All through **19 tools** and **11 skills**, over the hosted [MeetStream](https://meetstream.ai) MCP server.
+Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **Microsoft Teams** - or deploy a [**MIA voice agent**](#-mia-voice-agents-that-actually-talk) that listens and *talks back* in the room. All through **19 tools** and **10 skills**, over the hosted [MeetStream](https://meetstream.ai) MCP server.
 
 [![Docs](https://img.shields.io/badge/docs-docs.meetstream.ai-fd6316?style=flat-square)](https://docs.meetstream.ai)
 [![MCP](https://img.shields.io/badge/MCP-19%20tools-6b4ea8?style=flat-square)](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server)
-[![Skills](https://img.shields.io/badge/skills-11-45689f?style=flat-square)](#-skills)
+[![Skills](https://img.shields.io/badge/skills-10-45689f?style=flat-square)](#-skills)
 [![Platforms](https://img.shields.io/badge/Zoom%20%C2%B7%20Meet%20%C2%B7%20Teams-supported-2c8a61?style=flat-square)](https://docs.meetstream.ai/guides/introduction/how-bots-work)
 [![License](https://img.shields.io/badge/license-MIT-867c72?style=flat-square)](LICENSE)
 
@@ -150,13 +150,12 @@ Provider choice matters: [post-call](https://docs.meetstream.ai/guides/transcrip
 
 ## 📚 Skills
 
-Eleven skills teach the agent how to use MeetStream *well*. They load automatically when the conversation matches - no command to remember.
+Ten skills teach the agent how to use MeetStream *well*. They load automatically when the conversation matches - no command to remember.
 
 | Skill | Loads when you say | Deep dive |
 |---|---|---|
 | [**join-meeting**](skills/join-meeting/SKILL.md) | "join this meeting", "send a bot to…", "record this call" | [First bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
 | [**meeting-brief**](skills/meeting-brief/SKILL.md) | "summarize that meeting", "action items", "what did we decide last week" (saves notes and remembers them) | [Speaker timeline](https://docs.meetstream.ai/guides/features/participants-and-speaker-timeline) |
-| [**meeting-chat**](skills/meeting-chat/SKILL.md) (beta) | "answer questions in the meeting chat", "watch the chat" | [Chat](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
 | [**mia-voice-agents**](skills/mia-voice-agents/SKILL.md) | "voice agent", "talking bot", "wake word", "MIA" | [Create MIA](https://docs.meetstream.ai/guides/mia/create-an-agent) |
 | [**webhooks**](skills/webhooks/SKILL.md) | "webhook", "callback_url", "my webhook isn't firing" | [Events](https://docs.meetstream.ai/guides/webhooks/webhooks-and-events) · [Signatures](https://docs.meetstream.ai/guides/webhooks/webhook-signature-verification) |
 | [**realtime-streaming**](skills/realtime-streaming/SKILL.md) | "live captions", "stream the audio", "websocket" | [Live audio](https://docs.meetstream.ai/guides/websockets/real-time-audio-streaming) · [Control patterns](https://docs.meetstream.ai/guides/websockets/meeting-control-patterns) |
@@ -218,7 +217,7 @@ Restart Cursor. The symlink means edits apply on the next restart with no re-cop
 .cursor-plugin/plugin.json   manifest (no variables: sign-in is OAuth)
 mcp.json                     Cursor connector  -> mcp.meetstream.ai
 .mcp.json                    Claude Code / agent-plugin connector
-skills/*/SKILL.md            11 skills
+skills/*/SKILL.md            10 skills
 ```
 
 ## 🌐 The rest of the ecosystem
