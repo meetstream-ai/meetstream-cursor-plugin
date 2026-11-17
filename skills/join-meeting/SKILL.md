@@ -37,8 +37,22 @@ Ask for the meeting link if the user has not given one. Sensible defaults:
   valid values, it is ignored when video is off, and WhatsApp accepts only `"grid_view"`.
 - `separate_video_streams` - leave unset. Per-participant video is opt-in only; set it
   only when the user explicitly asks for it. Per-participant audio is unaffected.
-- Transcription provider - `deepgram` (model `nova-3`) is the sensible default for
-  English. See the `meeting-brief` skill for other languages and diarization.
+- Transcription provider - `meetstream` works on every account with no extra keys, so
+  use it unless the user says they added their own Deepgram, AssemblyAI or Sarvam key in
+  the MeetStream dashboard (then `deepgram` with model `nova-3` is a good English choice).
+  A provider whose key is missing fails after the call with no transcript. See the
+  `meeting-brief` skill for other languages and diarization.
+
+Before creating a bot, call **`list_bots`**: if a bot is already joining or in that
+meeting, reuse its `bot_id` instead of sending a second one.
+
+If `create_bot` fails:
+
+| Error | What to do |
+|---|---|
+| `Low credits please recharge` (403) | Call `top_up_link` if the server has it, else send the user to `https://app.meetstream.ai/billing`. Do not retry. |
+| 401 / not signed in | Sign in to the `meetstream` MCP server again (Cursor: Settings → MCP → Connect; Claude Code: `/mcp` → Authenticate; Codex: `codex mcp login meetstream`), then retry once. |
+| 400 with a field message | Fix that one field and retry once. |
 
 If the user wants the bot to arrive at a future time, pass `join_at` as an ISO 8601
 timestamp rather than sleeping and creating it later.
