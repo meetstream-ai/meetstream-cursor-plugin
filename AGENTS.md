@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for AI coding agents working in this repository. This repo is the **MeetStream plugin for Cursor** - a thin wrapper around the hosted MCP server plus 10 skills.
+Guidance for AI coding agents working in this repository. This repo is the **MeetStream plugin for Cursor** - a thin wrapper around the hosted MCP server plus 11 skills.
 
 ## Always use the MeetStream MCP
 
@@ -83,7 +83,7 @@ There is no build and no test runner. The plugin is declarative.
 .cursor-plugin/plugin.json   manifest (no variables: sign-in is OAuth)
 mcp.json                     Cursor connector  -> mcp.meetstream.ai
 .mcp.json                    Claude Code / agent-plugin connector
-skills/<name>/SKILL.md        10 skills
+skills/<name>/SKILL.md        11 skills
 ```
 
 ### Testing a change locally

@@ -218,7 +218,7 @@ Restart Cursor. The symlink means edits apply on the next restart with no re-cop
 .cursor-plugin/plugin.json   manifest (no variables: sign-in is OAuth)
 mcp.json                     Cursor connector  -> mcp.meetstream.ai
 .mcp.json                    Claude Code / agent-plugin connector
-skills/*/SKILL.md            10 skills
+skills/*/SKILL.md            11 skills
 ```
 
 ## 🌐 The rest of the ecosystem
