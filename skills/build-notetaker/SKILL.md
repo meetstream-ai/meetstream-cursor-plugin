@@ -46,8 +46,11 @@ Non-obvious things that break integrations:
 - **Every event carries a `timestamp`.**
 - **Streaming-only providers produce no post-call transcript.** `transcription.processed`
   never fires for them, though `bot.done` still does.
-- **`video_required` defaults to `true`.** Send `"video_required": false` on every bot
-  unless the user explicitly asked to record video; an omitted field records video.
+- **`video_required` defaults to `false`.** Still send `"video_required": false` on every
+  bot unless the user explicitly asked to record video, so the intent is explicit.
+  `audio_required` (default `true`) is a real field; turning off both audio and video with
+  nothing else to do (no live stream, `realtime_endpoints`, `socket_connection_url`,
+  `bot_message` or `agent_config_id`) returns 400.
 - **When video is on, send `recording_config.video_layout: "speaker_view"`.** The API
   defaults to `"grid_view"`. Both work on Google Meet, Teams and Zoom; Google Meet and
   Teams also take `"speaker_view_default"` / `"grid_view_default"` (Zoom: 400). The field

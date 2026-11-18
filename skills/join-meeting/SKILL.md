@@ -31,8 +31,8 @@ Ask for the meeting link if the user has not given one. Sensible defaults:
   Never leave this blank; a bot with no name looks like an intruder.
 - `record_video` - default off. Turn it on only if the user explicitly asks for video,
   since it takes longer to process and transcripts, summaries and speaker timelines all
-  work without it. On REST the field is `video_required`, which defaults to `true`, so
-  send `"video_required": false` explicitly.
+  work without it. On REST the field is `video_required`, which defaults to `false`;
+  send `"video_required": false` explicitly anyway so the intent is visible.
 - `video_layout` - only when video is on. Send `"speaker_view"` unless the user asks for
   grid or gallery view; the REST API defaults to `"grid_view"`. `"speaker_view"` and
   `"grid_view"` work on every platform. Google Meet and Teams also accept

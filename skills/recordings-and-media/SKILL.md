@@ -49,8 +49,11 @@ video. Audio only is faster to process and smaller to store, and transcripts, su
 diarization and speaker timelines all work without it.
 
 The surfaces differ. The MCP `create_bot` tool records **audio only** unless you pass
-`record_video: true`. The REST API's `video_required` **defaults to `true`**, so send
-`"video_required": false` explicitly; an omitted field records video.
+`record_video: true`. The REST API's `video_required` also **defaults to `false`**; send
+`"video_required": false` explicitly anyway so the request states the intent.
+`audio_required` (default `true`) records the mixed audio; `audio_required: false` with
+`video_required: false` and nothing else to do (no live stream, `realtime_endpoints`,
+`socket_connection_url`, `bot_message` or `agent_config_id`) returns 400.
 
 ### Layout: send `speaker_view` when video is on
 
