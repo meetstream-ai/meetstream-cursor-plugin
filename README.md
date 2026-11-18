@@ -104,7 +104,7 @@ Two fields worth setting that most people miss: **`boostwords`** on the transcri
 | `list_bots` | List your bots | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/list-bots) |
 | `get_bot_status` | Where it is right now | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/get-bot-status) |
 | `get_bot_detail` | Full record, incl. `transcript_id` | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/get-bot-details) |
-| `get_bot_summary` | AI summary of the meeting | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/get-bot-summary) |
+| `get_bot_summary` | Says there is no built-in summary; summarize from `get_transcript` | — |
 | `remove_bot` | Make it leave, **keep** the data | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/remove-bot) |
 | `delete_bot_data` | Permanently erase media + transcripts | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/delete-bot-data) |
 
@@ -155,7 +155,7 @@ Ten skills teach the agent how to use MeetStream *well*. They load automatically
 | Skill | Loads when you say | Deep dive |
 |---|---|---|
 | [**join-meeting**](skills/join-meeting/SKILL.md) | "join this meeting", "send a bot to…", "record this call" | [First bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
-| [**meeting-brief**](skills/meeting-brief/SKILL.md) | "summarize that meeting", "action items", "who talked the most" | [Speaker timeline](https://docs.meetstream.ai/guides/features/participants-and-speaker-timeline) |
+| [**meeting-brief**](skills/meeting-brief/SKILL.md) | "summarize that meeting", "action items", "what did we decide last week" (saves notes and remembers them) | [Speaker timeline](https://docs.meetstream.ai/guides/features/participants-and-speaker-timeline) |
 | [**mia-voice-agents**](skills/mia-voice-agents/SKILL.md) | "voice agent", "talking bot", "wake word", "MIA" | [Create MIA](https://docs.meetstream.ai/guides/mia/create-an-agent) |
 | [**webhooks**](skills/webhooks/SKILL.md) | "webhook", "callback_url", "my webhook isn't firing" | [Events](https://docs.meetstream.ai/guides/webhooks/webhooks-and-events) · [Signatures](https://docs.meetstream.ai/guides/webhooks/webhook-signature-verification) |
 | [**realtime-streaming**](skills/realtime-streaming/SKILL.md) | "live captions", "stream the audio", "websocket" | [Live audio](https://docs.meetstream.ai/guides/websockets/real-time-audio-streaming) · [Control patterns](https://docs.meetstream.ai/guides/websockets/meeting-control-patterns) |
