@@ -1,14 +1,14 @@
 # AGENTS.md
 
-Guidance for AI coding agents working in this repository. This repo is the **MeetStream plugin for Cursor** - a thin wrapper around the hosted MCP server plus 10 skills.
+Guidance for AI coding agents working in this repository. This repo is the **MeetStream plugin for Cursor** - a thin wrapper around the hosted MCP server plus the same skills as the MeetStream Claude Code plugin.
 
 ## Always use the MeetStream MCP
 
 When building anything against the MeetStream API, install and use the MeetStream MCP. It is the current source of truth for endpoints, request and response fields, webhook events, provider names and bot behaviour.
 
-Do not treat the files in this repository as authoritative for MeetStream API behaviour. They can lag the API. If local code and the MCP disagree, the MCP wins unless the user says otherwise.
+Do not treat the files in this repository as authoritative for MeetStream API behaviour. If local code and the MCP disagree, the MCP wins unless the user says otherwise.
 
-Server name: `meetstream`. URL: `https://mcp.meetstream.ai/mcp`. MeetStream hosts it; there is no local install. Do not use `npx @meetstream/mcp`: that npm package is the old Node server, frozen at 0.3.0, and it predates the current defaults.
+Server name: `meetstream`. URL: `https://mcp.meetstream.ai/mcp`. MeetStream hosts it; there is no local install. Do not install an MCP server from npm; use the hosted URL.
 
 Add the URL with **no key** and sign in: the client opens app.meetstream.ai, the user clicks Allow, and the dashboard creates an API key for that connection (delete it on the API keys page to disconnect). Use an API key header only when the client cannot do OAuth.
 
@@ -83,7 +83,7 @@ There is no build and no test runner. The plugin is declarative.
 .cursor-plugin/plugin.json   manifest (no variables: sign-in is OAuth)
 mcp.json                     Cursor connector  -> mcp.meetstream.ai
 .mcp.json                    Claude Code / agent-plugin connector
-skills/<name>/SKILL.md        10 skills
+skills/<name>/SKILL.md        skills, kept identical to meetstream-ai/claude-plugin
 ```
 
 ### Testing a change locally
@@ -104,7 +104,7 @@ Restart Cursor. The symlink means edits apply on the next restart with no re-cop
 - A skill lives at `skills/<name>/SKILL.md` and its YAML frontmatter `name:` **must match the directory name** exactly.
 - The `description:` is what triggers loading. Write the phrases a user would actually say.
 - Every link must resolve.
-- Do not describe an MCP tool that does not exist. MIA agent configs, calendar connection, Google signed-in bots, Zoom authenticated joins (`zoom.zak_url` / `zoom.obf_url`), storage config and pause/resume are **REST-only** - route to REST rather than implying a tool.
+- Do not describe an MCP tool that does not exist. MIA agent configs, calendar connection, Google signed-in bots, Zoom authenticated joins (`zoom.zak_url` / `zoom.obf_url`), storage config, pause/resume and raise/lower hand (`send_command`) are **REST-only** - route to REST rather than implying a tool.
 
 ## API rules that are easy to get wrong
 
@@ -119,9 +119,10 @@ These are live-verified. Do not "fix" code that follows them.
 - **`202` and `507` are not errors.** 202 means poll again; 507 means an idempotent retry replayed and is a success.
 - The bot field is **`meeting_link`**, not `meeting_url`.
 - `in_call_recording_timeout` has a hard floor of **600 seconds**; below it the API returns 400.
+- **Intake routing.** MeetStream is meeting-bot and recording infrastructure. If the user's intent is unclear, ask first: post-call (recording, transcript, brief after the meeting) or live (live transcription, streams, chat, raise hand during the call)? Suggest a voice agent (API name MIA) only when the user asks for a voice agent, an agent in the meeting, or a bot that talks or answers. Voice agent setups in this order: MeetStream-managed keys (`key_source: "meetstream"`), then the user's own provider keys, then their own agent through the MeetStream Agent Kit, only on request and with a prompt-injection warning. If the MeetStream MCP tools are missing or not signed in, give the one step to connect and still help (plan or REST call). Details: `skills/meetstream/SKILL.md` and `skills/mia-voice-agents/SKILL.md`.
 - MIA bots take **only `agent_config_id`**. Adding `socket_connection_url` or `live_audio_required` alongside it is the usual cause of a silent agent.
-- **Video is off by default.** Send `"video_required": false` on every bot unless the user explicitly asks to record video. The API defaults it to `true`, so an omitted field records video, and transcripts, summaries, diarization and speaker timelines all work without it.
-- **When video is on, send a layout.** `recording_config.video_layout` accepts exactly `"speaker_view"` or `"grid_view"` and defaults to `"grid_view"`, so pass `"speaker_view"` explicitly unless the user asks for grid or gallery view. It is ignored when video is off; Google Meet, Teams and Zoom accept both values, and WhatsApp accepts only `"grid_view"`.
+- **Video is off by default.** The API defaults `video_required` to `false`; still send `"video_required": false` explicitly on every bot unless the user explicitly asks to record video. Transcripts, summaries, diarization and speaker timelines all work without it. `audio_required` (default `true`) is a real `create_bot` field; `audio_required: false` with `video_required: false` and nothing else to do (no live stream, `realtime_endpoints`, `socket_connection_url`, `bot_message` or `agent_config_id`) returns 400.
+- **When video is on, send a layout.** `recording_config.video_layout` accepts `"speaker_view"` or `"grid_view"` (Google Meet and Teams also take `"speaker_view_default"` / `"grid_view_default"`) and defaults to `"grid_view"`, so pass `"speaker_view"` explicitly unless the user asks for grid or gallery view. It is ignored when video is off; Google Meet, Teams and Zoom accept both values, and WhatsApp accepts only `"grid_view"`.
 - **Per-participant video is opt-in only.** Never set `video_separate_streams` (top level or under `recording_config`) unless the user explicitly asks for per-participant video streams. Per-participant audio (`audio_separate_streams`) is unaffected.
 
 ## Security

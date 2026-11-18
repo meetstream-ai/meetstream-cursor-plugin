@@ -4,15 +4,13 @@
 
 **Put an AI bot in your meetings from inside your editor.**
 
-Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **Microsoft Teams** - or deploy a [**MIA voice agent**](#-mia-voice-agents-that-actually-talk) that listens and *talks back* in the room. All through **19 tools** and **10 skills**, over the hosted [MeetStream](https://meetstream.ai) MCP server.
+Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **Microsoft Teams** - or deploy a [**MIA voice agent**](#-mia-voice-agents-that-actually-talk) that listens and *talks back* in the room. All through the hosted MCP tools and the same skills as the Claude Code plugin, over the hosted [MeetStream](https://meetstream.ai) MCP server.
 
 [![Docs](https://img.shields.io/badge/docs-docs.meetstream.ai-fd6316?style=flat-square)](https://docs.meetstream.ai)
-[![MCP](https://img.shields.io/badge/MCP-19%20tools-6b4ea8?style=flat-square)](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server)
-[![Skills](https://img.shields.io/badge/skills-10-45689f?style=flat-square)](#-skills)
 [![Platforms](https://img.shields.io/badge/Zoom%20%C2%B7%20Meet%20%C2%B7%20Teams-supported-2c8a61?style=flat-square)](https://docs.meetstream.ai/guides/introduction/how-bots-work)
 [![License](https://img.shields.io/badge/license-MIT-867c72?style=flat-square)](LICENSE)
 
-[Install](#-install) · [Try it](#-what-you-can-ask) · [MIA](#-mia-voice-agents-that-actually-talk) · [Tools](#-the-19-tools) · [Skills](#-skills) · [Security](#-sign-in-and-keys) · [Docs](https://docs.meetstream.ai)
+[Install](#-install) · [Try it](#-what-you-can-ask) · [MIA](#-mia-voice-agents-that-actually-talk) · [Tools](#-the-tools) · [Skills](#-skills) · [Security](#-sign-in-and-keys) · [Docs](https://docs.meetstream.ai)
 
 </div>
 
@@ -93,7 +91,7 @@ Most meeting bots sit silently and record. **MIA** joins as a real participant t
 
 Two fields worth setting that most people miss: **`boostwords`** on the transcriber (fixes "it mishears our company name") and **`mcp_servers`** on the agent (turns a talking bot into one that does work). Full reference: [Create MIA](https://docs.meetstream.ai/guides/mia/create-an-agent) · [MIA configurations](https://docs.meetstream.ai/guides/mia/mia-custom-configurations) · [API](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config).
 
-## 🧰 The 19 tools
+## 🧰 The tools
 
 <details open>
 <summary><b>Bot lifecycle</b> - 7 tools</summary>
@@ -148,9 +146,19 @@ Provider choice matters: [post-call](https://docs.meetstream.ai/guides/transcrip
 
 </details>
 
+<details open>
+<summary><b>Credits</b></summary>
+
+| Tool | Does | API |
+|---|---|---|
+| `get_balance` | Prepaid credit balance, or the billing link when the balance is not available | — |
+| `top_up_link` | Billing page link to add credits (use it on `Low credits please recharge`) | — |
+
+</details>
+
 ## 📚 Skills
 
-Ten skills teach the agent how to use MeetStream *well*. They load automatically when the conversation matches - no command to remember.
+The skills teach the agent how to use MeetStream *well*. They load automatically when the conversation matches - no command to remember.
 
 | Skill | Loads when you say | Deep dive |
 |---|---|---|
@@ -163,7 +171,13 @@ Ten skills teach the agent how to use MeetStream *well*. They load automatically
 | [**calendar-automation**](skills/calendar-automation/SKILL.md) | "auto-join my meetings", "connect my calendar", "recurring" | [Google](https://docs.meetstream.ai/guides/calendar-integrations/google-calendar-oauth-setup) · [Outlook](https://docs.meetstream.ai/guides/calendar-integrations/outlook-calendar-setup) |
 | [**platform-setup**](skills/platform-setup/SKILL.md) | "can't join Zoom", "waiting room", "signed-in bots", "Teams lobby" | [Zoom](https://docs.meetstream.ai/guides/platforms/zoom) · [Meet](https://docs.meetstream.ai/guides/platforms/google-meet) · [Teams](https://docs.meetstream.ai/guides/platforms/microsoft-teams) |
 | [**troubleshooting**](skills/troubleshooting/SKILL.md) | "401", "403", "stuck on 202", "transcript never arrives" | [Errors](https://docs.meetstream.ai/errors) · [Debugging](https://docs.meetstream.ai/guides/help/debugging-bots) |
-| [**build-notetaker**](skills/build-notetaker/SKILL.md) | "build a notetaker", "integrate MeetStream into my app" | [Agent skills](https://docs.meetstream.ai/build-with-ai/agent-skills) |
+| [**getting-started**](skills/getting-started/SKILL.md) | "how do I start", "I don't have an API key" | [First bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
+| [**meetstream**](skills/meetstream/SKILL.md) | "integrate MeetStream into my app", any API, field or webhook question | [API reference](https://docs.meetstream.ai/api-reference/introduction) |
+| [**notetaker**](skills/notetaker/SKILL.md) | "build a notetaker", "email the summary after each call" | [Agent skills](https://docs.meetstream.ai/build-with-ai/agent-skills) |
+| [**sales-coach**](skills/sales-coach/SKILL.md) | "real-time sales coach", "live call coaching" | [Live transcription](https://docs.meetstream.ai/guides/transcription-recordings/live-transcription) |
+| [**verify-account**](skills/verify-account/SKILL.md) | "check my account", "which providers are configured" | [Authentication](https://docs.meetstream.ai/api-reference/authentication) |
+| [**test-bot**](skills/test-bot/SKILL.md) | "send a test bot", "watch the webhooks" | [First bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
+| [**migrate-from-recall**](skills/migrate-from-recall/SKILL.md) | "migrate from Recall", "switch from Recall.ai" | [Docs](https://docs.meetstream.ai) |
 
 <details>
 <summary><b>Why the skills matter more than the tools</b></summary>
@@ -181,7 +195,7 @@ The tools are just an API surface. The skills carry the hard-won details that st
 </details>
 
 > [!NOTE]
-> Some capabilities are **REST-only** and deliberately not MCP tools: [MIA agent configs](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config), [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar), signed-in bot account management for [Google](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots) and [Teams](https://docs.meetstream.ai/guides/app-integrations/teams-signed-in-bots) (sending a signed-in bot works over MCP via `create_bot`'s `google_login_domain` / `teams_login_domain`, MCP server 0.3.2+), [Zoom authenticated joins](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3) and [pause/resume](https://docs.meetstream.ai/guides/features/pause-resume-recording). The skills know the difference and route to REST instead of inventing a tool that doesn't exist.
+> Some capabilities are **REST-only** and deliberately not MCP tools: [MIA agent configs](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config), [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar), signed-in bot account management for [Google](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots) and [Teams](https://docs.meetstream.ai/guides/app-integrations/teams-signed-in-bots) (sending a signed-in bot works over MCP via `create_bot`'s `google_login_domain` / `teams_login_domain`), [Zoom authenticated joins](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3), [pause/resume](https://docs.meetstream.ai/guides/features/pause-resume-recording) and [raise/lower hand](https://docs.meetstream.ai/guides/features/raise-lower-hand). The skills know the difference and route to REST instead of inventing a tool that doesn't exist.
 
 ## 🔐 Sign-in and keys
 
@@ -200,7 +214,7 @@ Prefer to manage a key yourself (for example in CI)? Add the server to `~/.curso
 }
 ```
 
-The MCP server is hosted only: do not use `npx @meetstream/mcp`, which is the old Node server, frozen at 0.3.0.
+The MCP server is hosted only: there is nothing to install or run locally.
 
 Auth reference: [Authentication](https://docs.meetstream.ai/api-reference/authentication) · [MCP server setup](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server)
 
@@ -217,14 +231,14 @@ Restart Cursor. The symlink means edits apply on the next restart with no re-cop
 .cursor-plugin/plugin.json   manifest (no variables: sign-in is OAuth)
 mcp.json                     Cursor connector  -> mcp.meetstream.ai
 .mcp.json                    Claude Code / agent-plugin connector
-skills/*/SKILL.md            10 skills
+skills/*/SKILL.md            the same skills as the Claude Code plugin
 ```
 
 ## 🌐 The rest of the ecosystem
 
 | | What | Where |
 |:--:|---|---|
-| 🔌 | **MCP server** - the same 19 tools for any MCP client, hosted at `mcp.meetstream.ai/mcp` | [github](https://github.com/meetstream-ai/meetstream-mcp) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server) |
+| 🔌 | **MCP server** - the same tools for any MCP client, hosted at `mcp.meetstream.ai/mcp` | [github](https://github.com/meetstream-ai/meetstream-mcp) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server) |
 | ⌨️ | **CLI** - drive MeetStream from your terminal | [`@meetstream/cli`](https://www.npmjs.com/package/@meetstream/cli) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-cli) |
 | 🤖 | **Claude Code plugin** - `/plugin marketplace add meetstream-ai/claude-plugin` | [docs](https://docs.meetstream.ai/build-with-ai/claude-integration) |
 | 🧪 | **Labs** - runnable end-to-end templates | [github](https://github.com/meetstream-ai/labs) |

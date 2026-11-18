@@ -14,6 +14,19 @@ description: >
 You have the MeetStream MCP server connected. Pull the real data with its tools
 before writing anything. Never summarize a meeting you have not actually read.
 
+This is the post-call path. Build the brief from the transcript; MeetStream has no
+built-in summary (`get_bot_summary` only says so). Do not offer a voice agent unless the
+user asks for one.
+
+**If the MeetStream tools are missing or not signed in** (no `meetstream` tools, or a tool
+answers 401 or "not signed in"): give the user the one step to connect, and in the same
+reply keep helping. Do not stop at "sign in first".
+- Claude Code: `/mcp` → `meetstream` → sign in. Cursor: Settings → MCP → **Connect** next
+  to `meetstream`. Codex: `codex mcp login meetstream` (full steps:
+  https://github.com/meetstream-ai/claude-plugin/blob/main/INSTALL_FOR_AGENTS.md).
+- Then go on: give the plan, the `create_bot` fields you will send once the tools work,
+  or the REST call (`curl` with `Authorization: Token $MEETSTREAM_API_KEY`).
+
 ## Fastest route to a brief
 
 1. **`get_transcript`** with `wait: true` - the speaker-labelled transcript. Everything
@@ -40,6 +53,11 @@ transcript - say so instead of retrying forever.
 ## Talk-time and speaking balance
 
 `get_speaker_timeline` returns chunks with byte offsets into the audio, not seconds.
+For a large timeline (about 5 MB or more) the REST endpoint returns a download link
+instead of the chunks: `{"bot_id", "speaker_timeline_url", "size_bytes", "truncated": false}`.
+Download the URL (pre-signed, no API key, valid 1 hour; call again for a fresh one); the
+file has the same format as the inline body. Before the bot leaves the endpoint answers
+404 `Manifest file not found. It may still be processing.`
 Talk-time **shares** (percentages) are exact and safe to report. Absolute durations
 require the sample rate to convert bytes to time - if you cannot establish it, report
 shares and turn counts rather than inventing minute figures.
@@ -90,7 +108,11 @@ Set this on `create_bot` via the transcription provider option:
 | Indic languages | `sarvam` |
 | Alternative English engine | `assemblyai` |
 | MeetStream's own engine | `meetstream` |
+| Smallest AI (REST provider key) | `smallest` post-call (`model` `pulse` or `pulse-pro`), `smallest_streaming` live (`pulse` or `pulse-2`); needs a Smallest AI key in the dashboard (voice integrations) |
 | Live captions during the call | any `*_streaming` provider |
+
+Anthropic Claude is not a transcription provider. It is an LLM for voice agents (MIA; see
+`mia-voice-agents`).
 
 Post-call providers give you a transcript to fetch afterwards. Streaming providers
 deliver text live during the meeting and produce **no** post-call transcript. Pick
