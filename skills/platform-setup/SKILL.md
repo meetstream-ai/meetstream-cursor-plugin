@@ -4,7 +4,8 @@ description: >
   Platform-specific setup and quirks for Zoom, Google Meet and Microsoft
   Teams. Use when the user says "the bot can't join Zoom", "waiting room",
   "the host has to admit it", "recording permission", "Zoom setup", "do I need a Zoom app", "OBF",
-  "signed-in bots", "the bot shows as guest", "Teams lobby", or hits a
+  "use_own_app", "signed-in bots", "the bot shows as guest", "Teams lobby",
+  "meeting access is restricted", "sign in required", or hits a
   platform-specific failure rather than an API error.
 ---
 
@@ -19,7 +20,18 @@ from the terminal webhook first: every ending arrives with `event: "bot.stopped"
 | `bot.notallowed` | Sat in the waiting room until timeout | Have someone admit it, raise `waiting_room_timeout`, or use a signed-in bot |
 | `bot.denied` | A host actively refused it | Human decision. Do not auto-retry |
 | `bot.kicked` | A participant removed it | Human decision. Do not auto-retry |
-| `bot.failed` | Session crashed | Create a fresh bot |
+| `bot.failed` | Join failed or the session crashed | Read `ErrorReason` (below); otherwise create a fresh bot |
+
+`bot.failed` carries a specific reason in `bot_details.ErrorReason` (REST `GET /bots/{bot_id}/detail`).
+Google Meet `bot.failed` webhooks also carry it as `failure_reason`. Treat unknown values as a generic failure.
+
+| `ErrorReason` | Platform | Meaning | Fix |
+|---|---|---|---|
+| `MeetingRestricted` (`meeting_restricted`) | Google Meet, Teams | The meeting admits only the host's organization or invitees | Signed-in bot from an allowed domain/tenant, or ask the organizer to allow the bot |
+| `SignInRequired` (`sign_in_required`) | Google Meet, Teams (new on Teams) | The meeting does not accept anonymous guests | Google or Teams signed-in bot |
+| `InvalidMeetingLink` (`invalid_meeting_link`) | Google Meet, Teams (new on Teams) | Broken, cut-off or non-meeting link | Copy the full join link from the invite |
+
+Reference: https://docs.meetstream.ai/guides/reference/bot-status-and-error-codes
 
 Without webhooks, `get_bot_status` shows the same outcome as `NotAllowed`, `Denied` or `Error`.
 
@@ -34,13 +46,15 @@ does not expose these, so use the REST API when you need them:
 | `everyone_left_timeout` | Leave after the humans go |
 | `voice_inactivity_timeout` | Leave on silence |
 | `in_call_recording_timeout` | **Minimum 600 seconds** - below that the API returns HTTP 400 |
-| `recording_permission_denied_timeout` | **Zoom only**, accepted range 60-300 |
+| `recording_permission_denied_timeout` | **Zoom only**, accepted range 60-600, default 600 |
 
 ## Zoom
 
 Zoom does the one thing the others do not: it can require **explicit recording
 permission** from the host. If nobody grants it,
-`recording_permission_denied_timeout` decides how long the bot waits before giving up.
+`recording_permission_denied_timeout` decides how long the bot waits before giving up
+(60-600 seconds, default 600). A Zoom bot that joins without your own Zoom app records
+from admission whatever the host answers, so the timeout does not apply to it.
 
 **Zoom needs no setup.** A Zoom bot needs only the MeetStream API key and the meeting
 link: no Zoom Marketplace app, no Zoom app credentials, no Meeting SDK keys, no Zoom OAuth
@@ -59,7 +73,26 @@ dashboard (Integrations > Zoom) adds:
   refresh tokens; MeetStream does not store them.
 - Per-participant **camera** video (without your app, per-participant video contains
   screen shares only; per-participant audio works either way).
-- Live video into the bot camera, and MIA agent camera or avatar video.
+- Live video into the bot camera (`bot_camera_stream`). MIA agents can show images,
+  video and an avatar with or without your app.
+
+**Choosing the join with `zoom.use_own_app`** (REST `create_bot`, calendar schedule and
+scheduled-bot PATCH; optional):
+
+| `zoom.use_own_app` | What happens |
+|---|---|
+| omitted or `null` | Uses your Zoom app when one is saved or connected; otherwise joins without one |
+| `true` | Must use your Zoom app; 400 when none is configured |
+| `false` | Joins without your Zoom app even if one is saved. 400 with `zak_url` / `obf_url` |
+
+- Any other value: 400 `zoom.use_own_app must be true or false`.
+- **No fallback**: if Zoom refuses your app, the bot does not retry without it. Send
+  `use_own_app: false` to avoid the app.
+- No-setup join not offered for the account's region: 400 `Zoom bots are not available in this region right now`.
+- `meeting_captions` and `initial_audio` work only on bots that join without your app
+  (`meeting_captions` with your app: 400 `meeting_captions is not supported on Zoom. ...`).
+- A Zoom link with no meeting number (for example a `/my/` personal link) returns 400
+  `invalid_meeting_link: ...`. Use the `zoom.us/j/<number>` link.
 
 With your own app, development mode restricts bots to meetings hosted by the app owner;
 joining other accounts' meetings with your app needs Zoom's review and a ZAK or OBF token.

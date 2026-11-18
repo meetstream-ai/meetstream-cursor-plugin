@@ -22,7 +22,9 @@ before writing a handler.
 - Auth header: `Authorization: Token <MEETSTREAM_API_KEY>` - the literal word
   `Token`, not `Bearer`. (Note: the hosted MCP server this plugin connects to uses
   `Bearer`; the REST API uses `Token`. They differ. Do not copy one into the other.)
-- Errors return `{ "message": "..." }`. Always surface that message.
+- Errors return `{ "message": "..." }`. Always surface that message. A few endpoints
+  (in-meeting commands, the credit check, the prepaid 429) still send `error`, and older
+  bot data responses were a bare string: read `message`, then `error`, then the raw body.
 
 ## The lifecycle you must model
 
@@ -47,8 +49,18 @@ Non-obvious things that break integrations:
 - **`video_required` defaults to `true`.** Send `"video_required": false` on every bot
   unless the user explicitly asked to record video; an omitted field records video.
 - **When video is on, send `recording_config.video_layout: "speaker_view"`.** The API
-  defaults to `"grid_view"`. Those two are the only valid values, the field is ignored
-  when video is off, Google Meet, Teams and Zoom accept both, and WhatsApp is grid only.
+  defaults to `"grid_view"`. Both work on Google Meet, Teams and Zoom; Google Meet and
+  Teams also take `"speaker_view_default"` / `"grid_view_default"` (Zoom: 400). The field
+  is ignored when video is off, and WhatsApp is grid only.
+- **Zoom needs no setup.** Do not ask for a Zoom app. `zoom.use_own_app` (`true` /
+  `false` / omitted) only matters when the user has their own Zoom app.
+- **`get_speaker_timeline` has two shapes.** Large timelines return
+  `{bot_id, speaker_timeline_url, size_bytes, truncated: false}`; download the URL (no API
+  key, valid 1 hour). Always check for `speaker_timeline_url`.
+- **URLs you hand MeetStream must be public.** `callback_url`, `bot_image_url` (https
+  PNG/JPEG/GIF/WebP, else 400), image URLs and camera signaling hosts must resolve to
+  public addresses, or delivery/download is refused with no 400.
+- **`recording_permission_denied_timeout`** (Zoom) is 60-600 seconds, default 600.
 - **Per-participant video is opt-in only.** Never set `video_separate_streams` unless the
   user explicitly asked for it. Per-participant `audio_separate_streams` is unaffected.
 
@@ -75,7 +87,69 @@ the original bot and returns **HTTP 507** - treat that as success, not an error.
 does not create a duplicate bot and does not charge twice.
 
 For "one bot per calendar event", use `deduplication_key` in the body instead: replay
-returns `200`, and the same key with a different meeting returns `409`.
+returns `200`, and the same key with a different meeting returns `409`. While the first
+request with a key is still saving, a concurrent one can get `409` with `Retry-After: 2`;
+retry it with the same key.
+
+**Prepaid rate limit:** prepaid accounts can create 5 bots per rolling minute and 50 per
+rolling hour (bots with `join_at` 10+ minutes ahead are not counted). Over it: `429`,
+header `Retry-After: <seconds>`, body
+`{"error": "rate_limit_exceeded", "message", "limit", "window", "retry_after"}`, and no
+bot is created.
+
+```python
+import os, time, uuid, requests
+
+BASE = "https://api.meetstream.ai/api/v1"
+HEADERS = {"Authorization": f"Token {os.environ['MEETSTREAM_API_KEY']}"}
+
+def error_text(resp):
+    try:
+        body = resp.json()
+    except ValueError:
+        return resp.text
+    return (body.get("message") or body.get("error") or str(body)) if isinstance(body, dict) else str(body)
+
+def create_bot(body, key=None, attempts=5):
+    headers = {**HEADERS, "Idempotency-Key": key or str(uuid.uuid4())}  # one key for every attempt
+    for i in range(attempts):
+        resp = requests.post(f"{BASE}/bots/create_bot", headers=headers, json=body, timeout=30)
+        if resp.status_code in (201, 507):  # 507 = idempotent replay, success
+            return resp.json()
+        wait = int(resp.headers.get("Retry-After", "0") or 0)
+        if resp.status_code in (429, 409) and wait and i < attempts - 1:
+            time.sleep(wait)
+            continue
+        raise RuntimeError(f"create_bot {resp.status_code}: {error_text(resp)}")
+```
+
+```typescript
+const BASE = 'https://api.meetstream.ai/api/v1'
+const HEADERS = { Authorization: `Token ${process.env.MEETSTREAM_API_KEY}`, 'Content-Type': 'application/json' }
+
+async function errorText(res: Response): Promise<string> {
+  const raw = await res.text()
+  try {
+    const body = JSON.parse(raw)
+    return typeof body === 'object' && body ? (body.message ?? body.error ?? raw) : String(body)
+  } catch { return raw }
+}
+
+async function createBot(body: object, key: string = crypto.randomUUID(), attempts = 5) {
+  for (let i = 0; i < attempts; i++) {
+    const res = await fetch(`${BASE}/bots/create_bot`, {
+      method: 'POST', headers: { ...HEADERS, 'Idempotency-Key': key }, body: JSON.stringify(body)
+    })
+    if (res.status === 201 || res.status === 507) return res.json()  // 507 = replay, success
+    const wait = Number(res.headers.get('retry-after') ?? 0)
+    if ((res.status === 429 || res.status === 409) && wait > 0 && i < attempts - 1) {
+      await new Promise(r => setTimeout(r, wait * 1000))
+      continue
+    }
+    throw new Error(`create_bot ${res.status}: ${await errorText(res)}`)
+  }
+}
+```
 
 ## Webhooks in local development
 
