@@ -13,7 +13,7 @@ claude mcp add --transport http meetstream https://mcp.meetstream.ai/mcp
 # then /mcp -> Authenticate, sign in at app.meetstream.ai and click Allow
 ```
 
-Separately, the [MeetStream Claude plugin](https://github.com/meetstream-ai/claude-plugin) has the same skills (Bot API and voice agents) and also declares this MCP server, so installing it is enough in Claude Code:
+Separately, the [MeetStream Claude plugin](https://github.com/meetstream-ai/claude-plugin) has the same skills (the three flows: Bot API, agents on your own stack, hosted voice agents) and also declares this MCP server, so installing it is enough in Claude Code:
 
 ```sh
 /plugin marketplace add meetstream-ai/claude-plugin
