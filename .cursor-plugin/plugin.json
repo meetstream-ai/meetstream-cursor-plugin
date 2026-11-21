@@ -2,7 +2,7 @@
   "name": "meetstream",
   "displayName": "MeetStream",
   "description": "Three flows: the Bot API (AI meeting bots for Zoom, Google Meet and Microsoft Teams: record, transcribe and summarize calls, stream transcripts and audio live, auto-join from your calendar); agents in the meeting on your own stack (a bridge server with any models, including local ones, or your own agent through the Agent Kit); and the hosted Agents API (voice agents) - over the hosted MeetStream MCP server.",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "author": {
     "name": "MeetStream.ai",
     "email": "hello@meetstream.ai"

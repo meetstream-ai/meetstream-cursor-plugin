@@ -22,7 +22,7 @@ Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **
 2. **Agents in meetings on your own stack (recommended first when the user asks for an agent, a voice agent or a talking bot).**
    - 2a. **Bridge server.** The bot opens two WebSockets to your server: live audio in (`live_audio_required.websocket_url`) and the control socket (`socket_connection_url.websocket_url`) to send audio, chat, images and interrupts back. Run any speech-to-text, LLM and TTS, local or hosted (for example Parakeet for local speech-to-text). Price: the bot price only, no agent infrastructure and no model tokens. [Bridge server docs](https://docs.meetstream.ai/guides/websockets/bridge-server-architecture), starter: [meetstream-ai/meetstream-agent](https://github.com/meetstream-ai/meetstream-agent).
    - 2b. **Your own agent as the brain.** Claude Code, Codex, Hermes, OpenClaw and others through `model.provider: "local_agent"` and the MeetStream Agent Kit. The bot plus $0.25 per hour for the agent infrastructure, no model tokens. Warning: meeting speech reaches an agent that has access to your computer and terminal (prompt injection); keep the computer, the agent and the bridge on for the whole call, and use the lowest access level. [Your own agent](https://docs.meetstream.ai/guides/features/mia-screen-sharing-and-custom-agents).
-3. **Managed agent infrastructure (Agents API, API name MIA).** MeetStream hosts the voice agent: MeetStream's inbuilt keys (OpenAI and Deepgram today, no provider account) or your own provider keys. The bot plus $0.25 per hour for the agent infrastructure, plus the models you pick ([pricing and keys](https://docs.meetstream.ai/guides/mia/pricing-and-keys)). A hosted agent bot takes only `agent_config_id`, never the bridge sockets.
+3. **Managed agent infrastructure (Agents API, API name MIA).** MeetStream hosts the voice agent: MeetStream's inbuilt keys (no provider account; Pipeline: OpenAI + Deepgram. Realtime: OpenAI only.) or your own provider keys. The bot plus $0.25 per hour for the agent infrastructure, plus the models you pick ([pricing and keys](https://docs.meetstream.ai/guides/mia/pricing-and-keys)). A hosted agent bot takes only `agent_config_id`, never the bridge sockets.
 
 Overview: [Integration paths](https://docs.meetstream.ai/guides/introduction/integration-paths). The skills give the fastest path first (curl, Node `@meetstream/sdk`, Python `meetstream-sdk`) and end with links to the latest docs; for complete example apps see [Tutorials and Sample Apps](https://docs.meetstream.ai/tutorials/sample-apps).
 
@@ -185,16 +185,17 @@ The skills teach the agent how to use MeetStream *well*. They load automatically
 |---|---|---|
 | [**join-meeting**](skills/join-meeting/SKILL.md) | "join this meeting", "send a bot to…", "record this call" | [First bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
 | [**meeting-brief**](skills/meeting-brief/SKILL.md) | "summarize that meeting", "action items", "what did we decide last week" (saves notes and remembers them) | [Speaker timeline](https://docs.meetstream.ai/guides/features/participants-and-speaker-timeline) |
-| [**mia-voice-agents**](skills/mia-voice-agents/SKILL.md) | "voice agent", "agent in the meeting", "talking bot", "wake word", "MIA" | [Pricing and keys](https://docs.meetstream.ai/guides/mia/pricing-and-keys) · [Create MIA](https://docs.meetstream.ai/guides/mia/create-an-agent) |
+| [**mia-voice-agents**](skills/mia-voice-agents/SKILL.md) | "voice agent", "agent in the meeting", "talking bot", "wake word", "make Grok join my call", "standup agent", "AI interviewer", "MIA" | [Pricing and keys](https://docs.meetstream.ai/guides/mia/pricing-and-keys) · [Create MIA](https://docs.meetstream.ai/guides/mia/create-an-agent) |
 | [**webhooks**](skills/webhooks/SKILL.md) | "webhook", "callback_url", "my webhook isn't firing" | [Events](https://docs.meetstream.ai/guides/webhooks/webhooks-and-events) · [Signatures](https://docs.meetstream.ai/guides/webhooks/webhook-signature-verification) |
 | [**realtime-streaming**](skills/realtime-streaming/SKILL.md) | "live captions", "stream the audio", "websocket" | [Live audio](https://docs.meetstream.ai/guides/websockets/real-time-audio-streaming) · [Control patterns](https://docs.meetstream.ai/guides/websockets/meeting-control-patterns) |
 | [**recordings-and-media**](skills/recordings-and-media/SKILL.md) | "download the recording", "per-participant audio", "retention" | [Retrieve](https://docs.meetstream.ai/guides/transcription-recordings/retrieve-recordings) · [Per-participant](https://docs.meetstream.ai/guides/transcription-recordings/per-participant-audio) |
 | [**calendar-automation**](skills/calendar-automation/SKILL.md) | "auto-join my meetings", "connect my calendar", "recurring" | [Google](https://docs.meetstream.ai/guides/calendar-integrations/google-calendar-oauth-setup) · [Outlook](https://docs.meetstream.ai/guides/calendar-integrations/outlook-calendar-setup) |
-| [**platform-setup**](skills/platform-setup/SKILL.md) | "can't join Zoom", "waiting room", "signed-in bots", "Teams lobby" | [Zoom](https://docs.meetstream.ai/guides/platforms/zoom) · [Meet](https://docs.meetstream.ai/guides/platforms/google-meet) · [Teams](https://docs.meetstream.ai/guides/platforms/microsoft-teams) |
+| [**platform-setup**](skills/platform-setup/SKILL.md) | "can't join Zoom", "waiting room", "signed-in bots", "Teams lobby", "WhatsApp calls (Beta)" | [Zoom](https://docs.meetstream.ai/guides/platforms/zoom) · [Meet](https://docs.meetstream.ai/guides/platforms/google-meet) · [Teams](https://docs.meetstream.ai/guides/platforms/microsoft-teams) |
 | [**troubleshooting**](skills/troubleshooting/SKILL.md) | "401", "403", "stuck on 202", "transcript never arrives" | [Errors](https://docs.meetstream.ai/errors) · [Debugging](https://docs.meetstream.ai/guides/help/debugging-bots) |
 | [**getting-started**](skills/getting-started/SKILL.md) | "how do I start", "I don't have an API key" | [First bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
 | [**meetstream**](skills/meetstream/SKILL.md) | "integrate MeetStream into my app", any API, field or webhook question | [API reference](https://docs.meetstream.ai/api-reference/introduction) |
 | [**notetaker**](skills/notetaker/SKILL.md) | "build a notetaker", "email the summary after each call" (fastest path, API guide) | [Post-call transcription](https://docs.meetstream.ai/guides/transcription-recordings/post-call-transcription) |
+| [**for-your-customers**](skills/for-your-customers/SKILL.md) | "bots join our customers' calls", "per customer", "multi-tenant" | [Custom attributes](https://docs.meetstream.ai/guides/features/custom-attributes) · [Custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/overview) |
 | [**sales-coach**](skills/sales-coach/SKILL.md) | "real-time sales coach", "live call coaching" (fastest path, API guide) | [Live transcription](https://docs.meetstream.ai/guides/transcription-recordings/live-transcription) |
 | [**verify-account**](skills/verify-account/SKILL.md) | "check my account", "which providers are configured" | [Authentication](https://docs.meetstream.ai/api-reference/authentication) |
 | [**test-bot**](skills/test-bot/SKILL.md) | "send a test bot", "watch the webhooks" | [First bot](https://docs.meetstream.ai/guides/get-started/create-your-first-bot) |
@@ -234,6 +235,12 @@ Prefer to manage a key yourself (for example in CI)? Add the server to `~/.curso
   }
 }
 ```
+
+**Cursor Agent CLI (`cursor-agent`):** the CLI cannot finish the OAuth sign-in (the plugin's URL-only entry shows `needsAuth`), so use the key-header entry above in the project's `.cursor/mcp.json`.
+
+**Old Claude plugin shadowing the skills:** Cursor also loads Claude Code plugins and skills from `~/.claude`. An old MeetStream Claude plugin there can replace this plugin's skills; remove or update it.
+
+**OpenCode:** use the [Claude plugin](https://github.com/meetstream-ai/claude-plugin) repo's `setup --host opencode` (project `.opencode/skills` and `opencode.json`).
 
 The MCP server is hosted only: there is nothing to install or run locally.
 
