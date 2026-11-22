@@ -192,7 +192,9 @@ def body_misses():
         for name in files:
             if name.endswith(".md"):
                 fp = os.path.join(base, name)
-                for n, line in enumerate(open(fp, encoding="utf-8"), 1):
+                lines = open(fp, encoding="utf-8").read().split("\n")
+                for n, line in enumerate(lines, 1):
+                    near = " ".join((line + " " + (lines[n] if n < len(lines) else "")).split())  # wrapped lines
                     hit = STALE_ORDER.search(line)
                     if hit and not name == "CHANGELOG.md":
                         misses += 1
@@ -201,7 +203,7 @@ def body_misses():
                     if hit and not name == "CHANGELOG.md":
                         misses += 1
                         print(f"MISS {os.path.relpath(fp, ROOT)}:{n}: do-this-now step for a coming-soon track '{hit.group(0)}'")
-                    if re.search(r"LiveKit", line) and not re.search(r"coming soon", line, re.I) and not name == "CHANGELOG.md":
+                    if re.search(r"LiveKit", line) and not re.search(r"coming soon", near, re.I) and not name == "CHANGELOG.md":
                         misses += 1
                         print(f"MISS {os.path.relpath(fp, ROOT)}:{n}: LiveKit named without 'coming soon'")
                     hit = ZOOM_NO_SETUP.search(line)
