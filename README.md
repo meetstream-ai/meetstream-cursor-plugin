@@ -155,15 +155,35 @@ Provider choice matters: [post-call](https://docs.meetstream.ai/guides/transcrip
 </details>
 
 <details open>
-<summary><b>Live interaction &amp; calendar</b> - 5 tools</summary>
+<summary><b>Live interaction &amp; calendar</b> - 12 tools</summary>
 
 | Tool | Does | API |
 |---|---|---|
 | `send_chat_message` | Post into the meeting chat | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/send-message) |
 | `send_image` | Show an image as the bot's video | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/bot-endpoints/send-image) |
+| `take_screenshot` | Capture the meeting (Google Meet, Teams); get it with `get_media_urls` `kind: "screenshots"` | — |
+| `raise_hand` / `lower_hand` | Raise or lower the bot's hand | [guide](https://docs.meetstream.ai/guides/features/raise-lower-hand) |
+| `pause_recording` / `resume_recording` | Pause capture, then resume on the same timeline | [guide](https://docs.meetstream.ai/guides/features/pause-resume-recording) |
 | `list_calendar_events` | Upcoming synced events | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/fetch-sync-events) |
 | `schedule_calendar_bot` | Put a bot on an event | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/schedule-event) |
+| `list_calendar_connections` | Connected Google and Outlook accounts and their status (no tokens) | — |
+| `disconnect_calendar` | Disconnect a calendar (`confirm: true`; also deletes its synced events and scheduled bots by default) | — |
 | `webhook_events_guide` | The event lifecycle, inline | [ref](https://docs.meetstream.ai/guides/webhooks/webhooks-and-events) |
+
+</details>
+
+<details open>
+<summary><b>Voice agents</b> - 7 tools</summary>
+
+| Tool | Does | API |
+|---|---|---|
+| `list_agents` | Your agent configs and `mia_managed` (inbuilt keys on, and which providers and models); no prices | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config) |
+| `get_agent` | One agent config (keys redacted) | — |
+| `create_agent` | Create an agent (`model.system_prompt` required; inbuilt keys in pipeline mode only; never takes a key or the pairing token) | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config) |
+| `update_agent` | Change a saved config (a `mode` change needs the full config) | — |
+| `delete_agent` | Permanently delete a config (`confirm: true`) | — |
+| `check_local_agent` | Test a `local_agent` bridge; returns the status and the fix | [guide](https://docs.meetstream.ai/guides/features/mia-screen-sharing-and-custom-agents) |
+| `update_live_agent` | Change a running agent mid-call | — |
 
 </details>
 
@@ -217,7 +237,7 @@ The tools are just an API surface. The skills carry the hard-won details that st
 </details>
 
 > [!NOTE]
-> Some capabilities are **REST-only** and deliberately not MCP tools: [MIA agent configs](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config), [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar), signed-in bot account management for [Google](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots) and [Teams](https://docs.meetstream.ai/guides/app-integrations/teams-signed-in-bots) (sending a signed-in bot works over MCP via `create_bot`'s `google_login_domain` / `teams_login_domain`), [Zoom authenticated joins](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3), [pause/resume](https://docs.meetstream.ai/guides/features/pause-resume-recording) and [raise/lower hand](https://docs.meetstream.ai/guides/features/raise-lower-hand). The skills know the difference and route to REST instead of inventing a tool that doesn't exist.
+> Some capabilities are **REST or dashboard only** and deliberately not MCP tools: [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar) (needs OAuth secrets), signed-in bot account management for [Google](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots) and [Teams](https://docs.meetstream.ai/guides/app-integrations/teams-signed-in-bots) (sending a signed-in bot works over MCP via `create_bot`'s `google_login_domain` / `teams_login_domain`), [Zoom app setup](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3), provider keys and the Agent Kit pairing token (saved in the dashboard, never pasted in chat). The full tool list is in the [MCP server README](https://github.com/meetstream-ai/meetstream-mcp). The skills use the tools when the MCP is connected and give the REST call when it is not.
 
 ## 🔐 Sign-in and keys
 
