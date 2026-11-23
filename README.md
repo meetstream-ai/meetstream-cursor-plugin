@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **Moved to [meetstream-ai/meetstream-plugin](https://github.com/meetstream-ai/meetstream-plugin)**, one repository for every AI coding agent: Claude Code, Codex, Cursor, Copilot, Gemini CLI, Antigravity, OpenCode, Cline, Kiro, Hermes and OpenClaw. It holds the Cursor plugin (now `plugins/cursor`, listed through the root `.cursor-plugin/marketplace.json`). This repository is archived.
+
 <div align="center">
 
 # MeetStream for Cursor
