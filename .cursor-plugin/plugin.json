@@ -2,7 +2,7 @@
   "name": "meetstream",
   "displayName": "MeetStream",
   "description": "Build tracks: 1) the Recording bot (AI meeting bots for Zoom, Google Meet and Microsoft Teams: record, transcribe and summarize calls, post-call or real-time transcription, auto-join from your calendar); 2) the Bridge server (agents in the meeting on your own stack, with free local models or your harness's model); 3) the hosted Agents API (voice agents: MeetStream's default keys or your own keys; LiveKit and local agents coming soon) - over the hosted MeetStream MCP server.",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "author": {
     "name": "MeetStream.ai",
     "email": "hello@meetstream.ai"
