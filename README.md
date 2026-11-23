@@ -26,9 +26,11 @@ Join, record, transcribe and summarize calls on **Zoom**, **Google Meet** and **
    - 3a. **MeetStream's own, default keys** (recommended for "just host it"): no provider account. Inbuilt keys work in pipeline mode only: Deepgram (speech-to-text) and OpenAI (LLM and voice). Realtime mode runs on OpenAI and needs your own OpenAI key. Any other provider: bring your own key. If a section is refused, use 3c.
    - 3b. **Bring your own agent infra (LiveKit): COMING SOON.** Not available yet; no setup steps.
    - 3c. **Bring your own keys:** OpenAI, Anthropic, Deepgram, ElevenLabs and others in the docs.
-   - 3d. **Local agent: COMING SOON.** Your own agent CLI (Claude Code, Codex, Hermes and others) as the brain through the MeetStream Agent Kit and `model.provider: "local_agent"`. Not available yet; no setup steps. When it ships, meeting speech will reach an agent with access to your computer and terminal (prompt injection). Today, use track 2 (with your harness's own model as the LLM) or track 3a/3c.
+   - 3d. **Your coding agent as the brain: COMING SOON.** Your own agent CLI (Claude Code, Codex, Hermes and others) as MIA's brain through `meetstream setup` and `meetstream agent serve` over the MeetStream relay (no tunnel). Not available yet (the relay is not in production); no setup steps. When it ships, meeting speech will reach an agent with access to your computer and terminal (prompt injection). Today, use track 2 (with your harness's own model as the LLM) or track 3a/3c.
 
 If the user wants an agent and does not say which, ask once: run your own stack (track 2), or let MeetStream host it (track 3a/3c)? Never present 3b or 3d as available.
+
+**The `meetstream` CLI** is the local way in (terminal commands, scripts, `listen`, `setup`); the hosted MCP is the chat-style way in. Agents call it as `meetstream <command> --json --no-input`; `npx -y @meetstream/cli <command>` works with no install (or `npm install -g @meetstream/cli`, `pipx install meetstream-cli`, `brew install meetstream-ai/tap/meetstream`). `meetstream login` signs in through the browser. Per track: 1a `meetstream join <url>`, then `meetstream transcript <bot-id> --wait`; 1b `meetstream join <url> -t meetstream_streaming --live-transcript-webhook https://<public-url>/webhook` with `meetstream listen`; 2 `meetstream join <url> --live-audio-ws wss://<public-url>/audio --socket-ws wss://<public-url>/control`; 3a `meetstream setup --mode hosted`, then `meetstream join <url> --agent-config <id>`; 3c `meetstream setup --mode byok` (keys are added in the dashboard). Commands and JSON shapes: [`skills/meetstream/references/meetstream-cli.md`](skills/meetstream/references/meetstream-cli.md).
 
 Overview: [Integration paths](https://docs.meetstream.ai/guides/introduction/integration-paths). The skills give the fastest path first (curl, Node `@meetstream/sdk`, Python `meetstream-sdk`) and end with links to the latest docs; for complete example apps see [Tutorials and Sample Apps](https://docs.meetstream.ai/tutorials/sample-apps).
 
@@ -89,7 +91,7 @@ Agents come in on request, in this order (the build tracks):
 | 3a. Agents API, MeetStream's own, default keys (recommended for "just host it") | MeetStream hosts the agent with `"key_source": "meetstream"`. Inbuilt keys work in pipeline mode only: Deepgram (speech-to-text) and OpenAI (LLM and voice). Realtime mode runs on OpenAI and needs your own OpenAI key. Any other provider: bring your own key. | Bot + $0.25 agent infrastructure + the models you pick (the dashboard agent editor shows the rate) |
 | 3b. Bring your own agent infra (LiveKit) | COMING SOON | - |
 | 3c. Agents API, bring your own keys | MeetStream hosts the agent with your provider keys (OpenAI, Anthropic, Deepgram, ElevenLabs and others) | Bot + $0.25 agent infrastructure; the provider bills model usage |
-| 3d. Local agent (your own agent CLI through the Agent Kit) | COMING SOON | - |
+| 3d. Your coding agent as the brain (`meetstream setup` and `meetstream agent serve` over the MeetStream relay) | COMING SOON | - |
 
 In track 3a, if inbuilt keys are not on for your account yet, the API says so: use your own keys (3c). Track 3d, when it ships, connects meeting speech to an agent with access to your computer (prompt injection). The hosted agent (below) joins as a real participant that listens, answers, and can call tools mid-conversation; MeetStream runs its audio bridge, so you host nothing.
 
@@ -187,10 +189,10 @@ Provider choice matters: [post-call](https://docs.meetstream.ai/guides/transcrip
 |---|---|---|
 | `list_agents` | Your agent configs and `mia_managed` (inbuilt keys on, and which providers and models); no prices | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config) |
 | `get_agent` | One agent config (keys redacted) | — |
-| `create_agent` | Create an agent (`model.system_prompt` required; inbuilt keys in pipeline mode only; never takes a key or the pairing token) | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config) |
+| `create_agent` | Create an agent (`model.system_prompt` required; inbuilt keys in pipeline mode only; never takes a key) | [ref](https://docs.meetstream.ai/api-reference/api-endpoints/mia/create-agent-config) |
 | `update_agent` | Change a saved config (a `mode` change needs the full config) | — |
 | `delete_agent` | Permanently delete a config (`confirm: true`) | — |
-| `check_local_agent` | Test a `local_agent` bridge; returns the status and the fix | [guide](https://docs.meetstream.ai/guides/features/mia-screen-sharing-and-custom-agents) |
+| `check_local_agent` | Test a `local_agent` config (track 3d, coming soon); returns the status and the fix | [guide](https://docs.meetstream.ai/guides/features/mia-screen-sharing-and-custom-agents) |
 | `update_live_agent` | Change a running agent mid-call | — |
 
 </details>
@@ -245,7 +247,7 @@ The tools are just an API surface. The skills carry the hard-won details that st
 </details>
 
 > [!NOTE]
-> Some capabilities are **REST or dashboard only** and deliberately not MCP tools: [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar) (needs OAuth secrets), signed-in bot account management for [Google](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots) and [Teams](https://docs.meetstream.ai/guides/app-integrations/teams-signed-in-bots) (sending a signed-in bot works over MCP via `create_bot`'s `google_login_domain` / `teams_login_domain`), [Zoom app setup](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3), provider keys and the Agent Kit pairing token (saved in the dashboard, never pasted in chat). The full tool list is in the [MCP server README](https://github.com/meetstream-ai/meetstream-mcp). The skills use the tools when the MCP is connected and give the REST call when it is not.
+> Some capabilities are **REST or dashboard only** and deliberately not MCP tools: [calendar connection](https://docs.meetstream.ai/api-reference/api-endpoints/calendar/create-calendar) (needs OAuth secrets), signed-in bot account management for [Google](https://docs.meetstream.ai/guides/app-integrations/google-signed-in-bots) and [Teams](https://docs.meetstream.ai/guides/app-integrations/teams-signed-in-bots) (sending a signed-in bot works over MCP via `create_bot`'s `google_login_domain` / `teams_login_domain`), [Zoom app setup](https://docs.meetstream.ai/guides/app-integrations/zoom-authenticated-bots), [custom storage](https://docs.meetstream.ai/guides/features/custom-storage-configurations/amazon-s3), and provider keys (saved in the dashboard, never pasted in chat). The full tool list is in the [MCP server README](https://github.com/meetstream-ai/meetstream-mcp). The skills use the tools when the MCP is connected; when it is not, they run the `meetstream` CLI (`--json --no-input`) or give the REST call.
 
 ## 🔐 Sign-in and keys
 
@@ -295,7 +297,7 @@ skills/*/SKILL.md            the same skills as the Claude Code plugin
 | | What | Where |
 |:--:|---|---|
 | 🔌 | **MCP server** - the same tools for any MCP client, hosted at `mcp.meetstream.ai/mcp` | [github](https://github.com/meetstream-ai/meetstream-mcp) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-mcp-server) |
-| ⌨️ | **CLI** - drive MeetStream from your terminal | [`@meetstream/cli`](https://www.npmjs.com/package/@meetstream/cli) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-cli) |
+| ⌨️ | **CLI** - drive MeetStream from your terminal (`npx -y @meetstream/cli`, `pipx install meetstream-cli`, `brew install meetstream-ai/tap/meetstream`) | [github](https://github.com/meetstream-ai/cli) · [docs](https://docs.meetstream.ai/build-with-ai/meetstream-cli) |
 | 🤖 | **Claude Code plugin** - `/plugin marketplace add meetstream-ai/claude-plugin` | [docs](https://docs.meetstream.ai/build-with-ai/claude-integration) |
 | 🧪 | **Labs** - runnable end-to-end templates | [github](https://github.com/meetstream-ai/labs) |
 | 📖 | **Docs for agents** - machine-readable docs for your own tooling | [docs](https://docs.meetstream.ai/build-with-ai/docs-for-agents) |
